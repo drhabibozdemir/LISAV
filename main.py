@@ -917,6 +917,69 @@ def show_configuration():
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 use_container_width=True
             )
+    
+    # Save and Apply Changes button
+    st.divider()
+    st.markdown("### 💾 Save and Apply Changes")
+    
+    col_save1, col_save2, col_save3 = st.columns([1, 1, 1])
+    
+    with col_save1:
+        if st.button("✅ Save Configuration", use_container_width=True, type="primary"):
+            try:
+                # Update config_manager with edited data
+                config_manager.config_data = edited_df
+                
+                # Save to file
+                if config_manager.save_config_data(edited_df):
+                    st.success("✅ Configuration saved successfully!")
+                    
+                    # Reprocess approval system if data is loaded
+                    if st.session_state.data is not None:
+                        with st.spinner("🔄 Reprocessing approval system with updated configuration..."):
+                            approval_engine = st.session_state.approval_engine
+                            df_with_approval = approval_engine.process_test_results(st.session_state.data)
+                            st.session_state.data = df_with_approval
+                            st.session_state.filtered_data = df_with_approval
+                        
+                        st.success("🔄 Approval system reprocessed with updated rules!")
+                        st.rerun()
+                else:
+                    st.error("❌ Failed to save configuration")
+            except Exception as e:
+                st.error(f"❌ Error saving configuration: {e}")
+    
+    with col_save2:
+        if st.button("🔄 Reapply Approval Rules", use_container_width=True):
+            try:
+                if st.session_state.data is not None:
+                    with st.spinner("🔄 Reapplying approval rules..."):
+                        approval_engine = st.session_state.approval_engine
+                        df_with_approval = approval_engine.process_test_results(st.session_state.data)
+                        st.session_state.data = df_with_approval
+                        st.session_state.filtered_data = df_with_approval
+                    
+                    st.success("✅ Approval rules reapplied successfully!")
+                    st.rerun()
+                else:
+                    st.warning("⚠️ No data loaded. Please load data first.")
+            except Exception as e:
+                st.error(f"❌ Error reapplying approval rules: {e}")
+    
+    with col_save3:
+        if st.button("🔄 Reset to Original", use_container_width=True):
+            try:
+                # Reload original data without approval processing
+                with st.spinner("Reloading original data..."):
+                    data_loader = DataLoader()
+                    original_df = data_loader.load_sample_data()
+                    st.session_state.data = original_df
+                    st.session_state.filtered_data = original_df
+                
+                st.success("✅ Data reset to original!")
+                st.rerun()
+            except Exception as e:
+                st.error(f"❌ Error resetting data: {e}")
 
 def show_approval_system():
     """Display approval system interface"""
