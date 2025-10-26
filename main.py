@@ -1397,7 +1397,7 @@ def show_help():
     
     with col_contact2:
         st.markdown("""
-        **💻 Email**: dr.habibozdemir@gmail.com
+        **💻 Email**: drhabibozdemir@gmail.com
         """)
     
     st.info("💡 Sorunlar veya sorular için lütfen development team ile iletişime geçin.")
