@@ -927,27 +927,22 @@ def show_configuration():
     with col_save1:
         if st.button("✅ Save Configuration", use_container_width=True, type="primary"):
             try:
-                # Update config_manager with edited data
+                # Update config_manager with edited data (without saving to file)
                 config_manager.config_data = edited_df
+                st.success("✅ Configuration updated in memory!")
                 
-                # Save to file
-                if config_manager.save_config_data(edited_df):
-                    st.success("✅ Configuration saved successfully!")
+                # Reprocess approval system if data is loaded
+                if st.session_state.data is not None:
+                    with st.spinner("🔄 Reprocessing approval system with updated configuration..."):
+                        approval_engine = st.session_state.approval_engine
+                        df_with_approval = approval_engine.process_test_results(st.session_state.data)
+                        st.session_state.data = df_with_approval
+                        st.session_state.filtered_data = df_with_approval
                     
-                    # Reprocess approval system if data is loaded
-                    if st.session_state.data is not None:
-                        with st.spinner("🔄 Reprocessing approval system with updated configuration..."):
-                            approval_engine = st.session_state.approval_engine
-                            df_with_approval = approval_engine.process_test_results(st.session_state.data)
-                            st.session_state.data = df_with_approval
-                            st.session_state.filtered_data = df_with_approval
-                        
-                        st.success("🔄 Approval system reprocessed with updated rules!")
-                        st.rerun()
-                else:
-                    st.error("❌ Failed to save configuration")
+                    st.success("🔄 Approval system reprocessed with updated rules!")
+                    st.rerun()
             except Exception as e:
-                st.error(f"❌ Error saving configuration: {e}")
+                st.error(f"❌ Error updating configuration: {e}")
     
     with col_save2:
         if st.button("🔄 Reapply Approval Rules", use_container_width=True):
