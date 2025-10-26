@@ -1388,6 +1388,18 @@ def show_help():
     with col3:
         st.markdown("**Tarih**: Ekim 2025")
     
+    col_contact1, col_contact2 = st.columns(2)
+    
+    with col_contact1:
+        st.markdown("""
+        **📞 Telefon**: +90 506 940 6568
+        """)
+    
+    with col_contact2:
+        st.markdown("""
+        **💻 Email**: dr.habibozdemir@gmail.com
+        """)
+    
     st.info("💡 Sorunlar veya sorular için lütfen development team ile iletişime geçin.")
 
 
