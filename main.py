@@ -77,7 +77,8 @@ def main():
                 "📋 Overview",
                 "🔍 Data Explorer",
                 "⚙️ Configuration",
-                "✅ Approval System"
+                "✅ Approval System",
+                "❓ Help"
             ]
             
             current = st.session_state.get('current_page', "📋 Overview")
@@ -201,6 +202,8 @@ def main():
             show_configuration()
         elif st.session_state.current_page == "✅ Approval System":
             show_approval_system()
+        elif st.session_state.current_page == "❓ Help":
+            show_help()
     else:
         # Welcome screen
         show_welcome_screen()
@@ -1169,6 +1172,223 @@ def show_approval_system():
     
     else:
         st.error("Unable to generate approval statistics")
+
+def show_help():
+    """Display help documentation in Turkish"""
+    
+    st.title("❓ Yardım ve Kullanım Kılavuzu")
+    st.markdown("---")
+    
+    # Genel Bilgiler
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("### 📋 Genel Bilgiler")
+        st.info("""
+        **Laboratory Information System (LIS) v1.0.2**
+        
+        - **Geliştirici**: Dr. Habib ÖZDEMİR
+        - **Versiyon**: 1.0.2
+        - **Platform**: Streamlit
+        - **Teknoloji**: Python, Pandas, Plotly
+        """)
+    
+    with col2:
+        st.markdown("### 🎯 Özellikler")
+        st.success("""
+        ✅ Veri Yükleme ve Yönetimi
+        ✅ Onay Destek Sistemi
+        ✅ Kural Motoru
+        ✅ İstatistiksel Analiz
+        ✅ Görselleştirme
+        ✅ Konfigürasyon Yönetimi
+        """)
+    
+    st.markdown("---")
+    
+    # Sekmeler
+    st.markdown("### 🧭 Sekmeler ve Kullanım")
+    
+    tab1, tab2, tab3, tab4 = st.tabs(["📋 Overview", "🔍 Data Explorer", "⚙️ Configuration", "✅ Approval System"])
+    
+    with tab1:
+        st.markdown("""
+        #### 📊 Overview Sekmesi
+        
+        **Amaç**: Veri setinin genel görünümünü ve kalite metriklerini gösterir.
+        
+        **Özellikler**:
+        - Toplam hasta, örnek ve test sayıları
+        - Test dağılımı grafikleri
+        - Anormal değer analizi
+        - Veri kalitesi kontrolü
+        
+        **Kullanım**:
+        1. Veri yüklendikten sonra otomatik olarak gösterilir
+        2. Metrikler anlık olarak hesaplanır
+        3. Grafikler interaktiftir
+        """)
+    
+    with tab2:
+        st.markdown("""
+        #### 🔍 Data Explorer Sekmesi
+        
+        **Amaç**: Detaylı veri keşfi ve filtreleme yapmaya olanak sağlar.
+        
+        **Özellikler**:
+        - Tree Select View: Hasta → Örnek → Test hiyerarşisi
+        - Seçici checkbox'lar ile örnek seçimi
+        - Test sonuçlarının detaylı görüntülenmesi
+        - CSV export desteği
+        
+        **Kullanım**:
+        1. Sol tarafta hasta/örnek seçin
+        2. Sağ tarafta test sonuçlarını görüntüleyin
+        3. Filtreleyerek spesifik verileri inceleyin
+        4. CSV olarak indirin
+        """)
+    
+    with tab3:
+        st.markdown("""
+        #### ⚙️ Configuration Sekmesi
+        
+        **Amaç**: Test konfigürasyonunu düzenleme ve yönetim.
+        
+        **Özellikler**:
+        - Dictionary tablosunu düzenleme
+        - Yeni test ekleme
+        - Excel/CSV import/export
+        - Save butonu ile kural motorunu güncelleme
+        
+        **Kullanım**:
+        1. Dictionary tablosunda değişiklik yapın
+        2. "✅ Save Configuration" butonuna tıklayın
+        3. Approval system otomatik güncellenir
+        4. İstatistikler yeniden hesaplanır
+        """)
+    
+    with tab4:
+        st.markdown("""
+        #### ✅ Approval System Sekmesi
+        
+        **Amaç**: Laboratuvar onay destek sistemini kullanarak test sonuçlarını otomatik onaylama.
+        
+        **Özellikler**:
+        - Auto Validated: Tüm kurallar geçti
+        - Manual Review Needed: En az bir kural başarısız
+        - İstatistiksel raporlama
+        - Başarısız kural analizi
+        
+        **Kurallar** (öncelik sırasına göre):
+        1. **IQC**: Internal Quality Control kontrolü
+        2. **EQC**: External Quality Control kontrolü
+        3. **Critical Value**: Kritik değer kontrolü
+        4. **Delta Check**: Değişim oranı kontrolü
+        5. **Reference Range**: Referans aralığı kontrolü
+        6. **Serum Index**: Serum endeks girişim kontrolü
+        
+        **Kullanım**:
+        1. Veri yüklendiğinde otomatik işlenir
+        2. İstatistikleri görüntüleyin
+        3. Başarısız kuralları analiz edin
+        4. Detaylı sonuçları inceleyin
+        """)
+    
+    st.markdown("---")
+    
+    # Kural Motoru Detayları
+    st.markdown("### 🔧 Kural Motoru Detayları")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        **IQC/EQC Kuralları**:
+        - Değer 1 = Test onaylanmaya uygun ✅
+        - Değer 0 = Manuel inceleme gerekli ⚠️
+        
+        **Critical Value**:
+        - Min/Max kritik değerler arasında olmalı
+        - Aksi halde manuel inceleme gerekli
+        
+        **Delta Check**:
+        - Önceki değerlerle karşılaştırma
+        - Belirlenen oran dışında değişim yasak
+        """)
+    
+    with col2:
+        st.markdown("""
+        **Reference Range**:
+        - Test değeri referans aralığında olmalı
+        - Altındaki veya üstündeki değerler işaretlenir
+        
+        **Serum Index**:
+        - Hemoliz, ikterus, lipemi kontrolü
+        - İlgili test etkileniyorsa uyarı verilir
+        
+        **Onay Durumları**:
+        - ✅ Auto Validated: Otomatik onaylandı
+        - ⚠️ Manual Review: Manuel inceleme gerekli
+        """)
+    
+    st.markdown("---")
+    
+    # SSS
+    st.markdown("### ❓ Sık Sorulan Sorular")
+    
+    with st.expander("📁 Veri nasıl yüklenir?"):
+        st.markdown("""
+        1. Sidebar'daki "Upload CSV File" butonunu kullanın
+        2. Veya "📂 Reload Sample Data" ile örnek veriyi yükleyin
+        3. CSV formatı gerekli kolonları içermelidir:
+           - patient_id, sample_id, test_name, test_value
+           - test_flag, reference_min, reference_max
+           - hemolysis_value, icterus_value, lipemia_value
+        """)
+    
+    with st.expander("⚙️ Konfigürasyon nasıl güncellenir?"):
+        st.markdown("""
+        1. Configuration sekmesine gidin
+        2. Dictionary tablosunda değişiklik yapın
+        3. "✅ Save Configuration" butonuna tıklayın
+        4. Approval system otomatik güncellenecek
+        5. İstatistikler yeniden hesaplanacak
+        """)
+    
+    with st.expander("🔬 Onay sistemi nasıl çalışır?"):
+        st.markdown("""
+        1. Her test sonucu için kurallar kontrol edilir
+        2. Öncelik sırasına göre kural değerlendirmesi yapılır
+        3. Tüm kurallar geçerse: Auto Validated
+        4. Herhangi bir kural başarısızsa: Manual Review Needed
+        5. Detaylı bilgiler comment kolonunda görünür
+        """)
+    
+    with st.expander("📊 İstatistikler nasıl yorumlanır?"):
+        st.markdown("""
+        - **Auto Validated**: Otomatik onaylanan test oranı
+        - **Manual Review**: Manuel inceleme gereken test oranı
+        - **Failed Rules**: En sık başarısız olan kurallar
+        - Pie chart ile durum dağılımı görüntülenir
+        """)
+    
+    st.markdown("---")
+    
+    # İletişim
+    st.markdown("### 📞 Destek ve İletişim")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("**Geliştirici**: Dr. Habib ÖZDEMİR")
+    
+    with col2:
+        st.markdown("**Versiyon**: 1.0.2")
+    
+    with col3:
+        st.markdown("**Tarih**: Ekim 2025")
+    
+    st.info("💡 Sorunlar veya sorular için lütfen development team ile iletişime geçin.")
 
 
 if __name__ == "__main__":
