@@ -68,9 +68,11 @@ class DataLoader:
             FileNotFoundError: If sample data file is not found
             ValueError: If sample data is malformed
         """
-        # Try multiple possible paths
+        # Try multiple possible paths (deployment-friendly)
         possible_paths = [
+            Path(__file__).parent.parent / 'data' / "v1.1.0" / 'synthetic_patient_data_v1.1.0.csv',
             self.base_path / 'data' / "v1.1.0" / 'synthetic_patient_data_v1.1.0.csv',
+            Path('data') / "v1.1.0" / 'synthetic_patient_data_v1.1.0.csv',
             self.base_path.parent / 'data' / "v1.1.0" / 'synthetic_patient_data_v1.1.0.csv',
             self.base_path.parent.parent / 'data' / "v1.1.0" / 'synthetic_patient_data_v1.1.0.csv',
         ]
