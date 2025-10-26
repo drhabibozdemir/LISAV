@@ -1,0 +1,12 @@
+﻿test;age;hemolysis;icterus;lipemia;IQC;EQC;ref_min;ref_max;delta_check_min;delta_check_max;analyzer_flag;units;critical_min;critical_max;delta_check_interval
+ALT;Adult;1;0;1;1;0;0;40;-0,3;0,3;1;U/L;100;1000;7
+Glukoz;Adult;0;0;0;0;1;70;100;-0,15;0,15;1;mg/dL;40;500;1
+Hemoglobin;Adult;1;0;1;1;1;13;17;-0,07;0,07;1;g/dL;7;22;1
+Kalsiyum;Adult;1;0;0;1;0;8,5;10,5;-0,05;0,05;1;mg/dL;6;14;3
+Kreatinin;Adult;1;0;0;0;1;0,6;1,3;-0,2;0,2;1;mg/dL;0,2;5;2
+LDH;Adult;1;0;1;1;1;140;280;-0,2;0,2;1;U/L;50;1000;2
+Potasyum;Adult;1;0;0;0;1;3,5;5,1;-0,05;0,05;1;mmol/L;2,5;7;1
+Sodyum;Adult;0;0;0;0;1;135;145;-0,01;0,01;1;mmol/L;120;160;1
+Total Bilirubin;Adult;0;1;1;0;0;0,3;1,2;-0,2;0,2;1;mg/dL;3;20;2
+Total Protein;Adult;0;1;1;1;1;6;8;-0,1;0,1;1;g/dL;4;9;7
+Trigliserid;Adult;0;0;1;1;1;0;150;-0,25;0,25;1;mg/dL;20;1000;7

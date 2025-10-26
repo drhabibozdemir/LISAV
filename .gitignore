@@ -1,0 +1,22 @@
+# Streamlit deployment ignore files
+
+# Excel temporary files
+~$*.xlsx
+~$*.xls
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter
+.ipynb_checkpoints
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
