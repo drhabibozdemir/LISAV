@@ -51,6 +51,8 @@ def main():
         st.session_state.filtered_data = None
     if 'data_loaded' not in st.session_state:
         st.session_state.data_loaded = False
+    if 'last_uploaded_file_id' not in st.session_state:
+        st.session_state.last_uploaded_file_id = None
     if 'config_manager' not in st.session_state:
         st.session_state.config_manager = ConfigManager()
     if 'approval_engine' not in st.session_state:
@@ -130,27 +132,35 @@ def main():
         )
         
         if uploaded_file is not None:
-            try:
-                with st.spinner("Loading uploaded file..."):
-                    data_loader = DataLoader()
-                    df = data_loader.load_csv(uploaded_file)
-                    
-                    # Process auto verification system
-                    with st.spinner("Processing auto verification system..."):
-                        approval_engine = st.session_state.approval_engine
-                        df_with_approval = approval_engine.process_test_results(df)
-                    
-                    st.session_state.data = df_with_approval
-                    st.session_state.filtered_data = df_with_approval
-                    st.session_state.data_loaded = True
-                    st.success(f"✅ Data loaded successfully! ({len(df)} rows)")
-                    st.rerun()
-            except ValueError as e:
-                st.error(f"❌ Error in file format: {e}")
-            except FileNotFoundError as e:
-                st.error(f"❌ File not found: {e}")
-            except Exception as e:
-                st.error(f"❌ Error loading file: {str(e)}")
+            # Check if this is a new file upload
+            file_id = f"{uploaded_file.name}_{uploaded_file.size}"
+            
+            if 'last_uploaded_file_id' not in st.session_state or st.session_state.last_uploaded_file_id != file_id:
+                try:
+                    with st.spinner("Loading uploaded file..."):
+                        data_loader = DataLoader()
+                        df = data_loader.load_csv(uploaded_file)
+                        
+                        # Process auto verification system
+                        with st.spinner("Processing auto verification system..."):
+                            approval_engine = st.session_state.approval_engine
+                            df_with_approval = approval_engine.process_test_results(df)
+                        
+                        st.session_state.data = df_with_approval
+                        st.session_state.filtered_data = df_with_approval
+                        st.session_state.data_loaded = True
+                        st.session_state.last_uploaded_file_id = file_id
+                        st.success(f"✅ Data loaded successfully! ({len(df)} rows)")
+                        st.rerun()
+                except ValueError as e:
+                    st.error(f"❌ Error in file format: {e}")
+                except FileNotFoundError as e:
+                    st.error(f"❌ File not found: {e}")
+                except Exception as e:
+                    st.error(f"❌ Error loading file: {str(e)}")
+            else:
+                # File already loaded, just show success message
+                st.success(f"✅ Data already loaded! ({len(st.session_state.data)} rows)")
         
         # Reload sample data button
         if st.button("📂 Reload Sample Data", use_container_width=True):
@@ -167,6 +177,7 @@ def main():
                     st.session_state.data = df_with_approval
                     st.session_state.filtered_data = df_with_approval
                     st.session_state.data_loaded = True
+                    st.session_state.last_uploaded_file_id = None  # Clear file upload tracking
                     st.success(f"✅ Sample data reloaded! ({len(df)} rows)")
                     st.rerun()
             except FileNotFoundError as e:
