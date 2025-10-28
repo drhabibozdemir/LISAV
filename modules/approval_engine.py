@@ -242,17 +242,18 @@ class ApprovalEngine:
     
     def get_approval_statistics(self, df: pd.DataFrame) -> Dict:
         """
-        Get approval statistics
+        Get comprehensive approval statistics
         
         Args:
             df: DataFrame with approval results
             
         Returns:
-            Dictionary with approval statistics
+            Dictionary with comprehensive approval statistics
         """
         if df is None or len(df) == 0:
             return {}
         
+        # Basic statistics
         total_tests = len(df)
         auto_validated = len(df[df['approval_status'] == 'Auto Validated'])
         manual_review = len(df[df['approval_status'] == 'Manual Review Needed'])
@@ -267,7 +268,8 @@ class ApprovalEngine:
                     if rule:
                         failed_rules_stats[rule] = failed_rules_stats.get(rule, 0) + 1
         
-        return {
+        # Additional comprehensive statistics
+        stats = {
             'total_tests': total_tests,
             'auto_validated': auto_validated,
             'manual_review_needed': manual_review,
@@ -275,3 +277,206 @@ class ApprovalEngine:
             'manual_review_rate': (manual_review / total_tests * 100) if total_tests > 0 else 0,
             'failed_rules_stats': failed_rules_stats
         }
+        
+        # Add comprehensive statistics
+        stats.update(self._get_comprehensive_statistics(df))
+        
+        return stats
+    
+    def _get_comprehensive_statistics(self, df: pd.DataFrame) -> Dict:
+        """
+        Get comprehensive approval statistics including time-based, test-based, and patient-based analysis
+        
+        Args:
+            df: DataFrame with approval results
+            
+        Returns:
+            Dictionary with comprehensive statistics
+        """
+        comprehensive_stats = {}
+        
+        # 1. Test-based statistics
+        comprehensive_stats['test_statistics'] = self._get_test_based_statistics(df)
+        
+        # 2. Patient-based statistics
+        comprehensive_stats['patient_statistics'] = self._get_patient_based_statistics(df)
+        
+        # 3. Time-based statistics
+        comprehensive_stats['time_statistics'] = self._get_time_based_statistics(df)
+        
+        # 4. Quality control statistics
+        comprehensive_stats['quality_control_stats'] = self._get_quality_control_statistics(df)
+        
+        # 5. Rule failure analysis
+        comprehensive_stats['rule_analysis'] = self._get_rule_failure_analysis(df)
+        
+        # 6. Sample quality statistics
+        comprehensive_stats['sample_quality_stats'] = self._get_sample_quality_statistics(df)
+        
+        return comprehensive_stats
+    
+    def _get_test_based_statistics(self, df: pd.DataFrame) -> Dict:
+        """Get test-specific approval statistics"""
+        test_stats = {}
+        
+        for test_name in df['test_name'].unique():
+            test_data = df[df['test_name'] == test_name]
+            total_tests = len(test_data)
+            auto_validated = len(test_data[test_data['approval_status'] == 'Auto Validated'])
+            manual_review = len(test_data[test_data['approval_status'] == 'Manual Review Needed'])
+            
+            test_stats[test_name] = {
+                'total_tests': total_tests,
+                'auto_validated': auto_validated,
+                'manual_review_needed': manual_review,
+                'auto_validation_rate': (auto_validated / total_tests * 100) if total_tests > 0 else 0,
+                'manual_review_rate': (manual_review / total_tests * 100) if total_tests > 0 else 0,
+                'abnormal_rate': (len(test_data[test_data['test_flag'].isin(['H', 'L'])]) / total_tests * 100) if total_tests > 0 else 0
+            }
+        
+        return test_stats
+    
+    def _get_patient_based_statistics(self, df: pd.DataFrame) -> Dict:
+        """Get patient-specific approval statistics"""
+        patient_stats = {}
+        
+        for patient_id in df['patient_id'].unique():
+            patient_data = df[df['patient_id'] == patient_id]
+            total_tests = len(patient_data)
+            auto_validated = len(patient_data[patient_data['approval_status'] == 'Auto Validated'])
+            manual_review = len(patient_data[patient_data['approval_status'] == 'Manual Review Needed'])
+            
+            # Get patient demographics
+            patient_info = patient_data.iloc[0]
+            age = patient_info.get('age', 'N/A')
+            gender = patient_info.get('gender', 'N/A')
+            
+            patient_stats[patient_id] = {
+                'total_tests': total_tests,
+                'auto_validated': auto_validated,
+                'manual_review_needed': manual_review,
+                'auto_validation_rate': (auto_validated / total_tests * 100) if total_tests > 0 else 0,
+                'manual_review_rate': (manual_review / total_tests * 100) if total_tests > 0 else 0,
+                'age': age,
+                'gender': gender,
+                'total_samples': patient_data['sample_id'].nunique()
+            }
+        
+        return patient_stats
+    
+    def _get_time_based_statistics(self, df: pd.DataFrame) -> Dict:
+        """Get time-based approval statistics"""
+        time_stats = {}
+        
+        if 'sample_lab_admission_time' in df.columns:
+            # Convert to datetime if possible
+            try:
+                df['datetime'] = pd.to_datetime(df['sample_lab_admission_time'])
+                
+                # Daily statistics
+                daily_stats = df.groupby(df['datetime'].dt.date).agg({
+                    'approval_status': ['count', lambda x: (x == 'Auto Validated').sum()]
+                }).round(2)
+                
+                daily_stats.columns = ['total_tests', 'auto_validated']
+                daily_stats['auto_validation_rate'] = (daily_stats['auto_validated'] / daily_stats['total_tests'] * 100).round(2)
+                
+                time_stats['daily_stats'] = daily_stats.to_dict('index')
+                
+                # Hourly distribution
+                hourly_stats = df.groupby(df['datetime'].dt.hour).agg({
+                    'approval_status': ['count', lambda x: (x == 'Auto Validated').sum()]
+                }).round(2)
+                
+                hourly_stats.columns = ['total_tests', 'auto_validated']
+                hourly_stats['auto_validation_rate'] = (hourly_stats['auto_validated'] / hourly_stats['total_tests'] * 100).round(2)
+                
+                time_stats['hourly_stats'] = hourly_stats.to_dict('index')
+                
+            except Exception as e:
+                time_stats['error'] = f"Time parsing error: {str(e)}"
+        
+        return time_stats
+    
+    def _get_quality_control_statistics(self, df: pd.DataFrame) -> Dict:
+        """Get quality control related statistics"""
+        qc_stats = {}
+        
+        # IQC/EQC statistics
+        iqc_failed = len(df[df['failed_rules'].str.contains('IQC', na=False)])
+        eqc_failed = len(df[df['failed_rules'].str.contains('EQC', na=False)])
+        critical_failed = len(df[df['failed_rules'].str.contains('critical_value', na=False)])
+        delta_failed = len(df[df['failed_rules'].str.contains('delta_check', na=False)])
+        reference_failed = len(df[df['failed_rules'].str.contains('reference_range', na=False)])
+        serum_index_failed = len(df[df['failed_rules'].str.contains('serum_index', na=False)])
+        
+        qc_stats = {
+            'iqc_failures': iqc_failed,
+            'eqc_failures': eqc_failed,
+            'critical_value_failures': critical_failed,
+            'delta_check_failures': delta_failed,
+            'reference_range_failures': reference_failed,
+            'serum_index_failures': serum_index_failed,
+            'total_qc_failures': iqc_failed + eqc_failed + critical_failed + delta_failed + reference_failed + serum_index_failed
+        }
+        
+        return qc_stats
+    
+    def _get_rule_failure_analysis(self, df: pd.DataFrame) -> Dict:
+        """Get detailed rule failure analysis"""
+        rule_analysis = {}
+        
+        # Count failures by rule type
+        rule_failures = {}
+        for idx, row in df.iterrows():
+            failed_rules = row.get('failed_rules', '')
+            if failed_rules:
+                rules = [rule.strip() for rule in failed_rules.split(',')]
+                for rule in rules:
+                    if rule:
+                        rule_failures[rule] = rule_failures.get(rule, 0) + 1
+        
+        # Get most problematic tests
+        test_failure_counts = {}
+        for test_name in df['test_name'].unique():
+            test_data = df[df['test_name'] == test_name]
+            failures = len(test_data[test_data['approval_status'] == 'Manual Review Needed'])
+            test_failure_counts[test_name] = failures
+        
+        # Sort by failure count
+        most_problematic_tests = dict(sorted(test_failure_counts.items(), key=lambda x: x[1], reverse=True)[:10])
+        
+        rule_analysis = {
+            'rule_failure_counts': rule_failures,
+            'most_problematic_tests': most_problematic_tests,
+            'total_rule_failures': sum(rule_failures.values())
+        }
+        
+        return rule_analysis
+    
+    def _get_sample_quality_statistics(self, df: pd.DataFrame) -> Dict:
+        """Get sample quality related statistics"""
+        sample_quality_stats = {}
+        
+        # Hemolysis statistics
+        hemolysis_samples = len(df[df['hemolysis_value'] == 1])
+        icterus_samples = len(df[df['icterus_value'] == 1])
+        lipemia_samples = len(df[df['lipemia_value'] == 1])
+        
+        # Samples with quality issues
+        quality_issue_samples = len(df[(df['hemolysis_value'] == 1) | (df['icterus_value'] == 1) | (df['lipemia_value'] == 1)])
+        
+        # Approval rates for samples with quality issues
+        quality_issue_data = df[(df['hemolysis_value'] == 1) | (df['icterus_value'] == 1) | (df['lipemia_value'] == 1)]
+        quality_issue_auto_validated = len(quality_issue_data[quality_issue_data['approval_status'] == 'Auto Validated'])
+        
+        sample_quality_stats = {
+            'hemolysis_samples': hemolysis_samples,
+            'icterus_samples': icterus_samples,
+            'lipemia_samples': lipemia_samples,
+            'total_quality_issue_samples': quality_issue_samples,
+            'quality_issue_auto_validation_rate': (quality_issue_auto_validated / quality_issue_samples * 100) if quality_issue_samples > 0 else 0,
+            'quality_issue_percentage': (quality_issue_samples / len(df) * 100) if len(df) > 0 else 0
+        }
+        
+        return sample_quality_stats

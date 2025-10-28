@@ -4,6 +4,7 @@ Version 1.0.2
 """
 import streamlit as st
 import pandas as pd
+import plotly.express as px
 from streamlit_tree_select import tree_select
 from modules.data_loader import DataLoader
 from modules.data_filter import DataFilter
@@ -982,7 +983,7 @@ def show_configuration():
             )
 
 def show_approval_system():
-    """Display approval system interface"""
+    """Display comprehensive approval system interface"""
     df = st.session_state.data
     
     if df is None:
@@ -990,13 +991,14 @@ def show_approval_system():
         return
     
     st.subheader("✅ Laboratory Approval System")
-    st.markdown("*Automated validation system using laboratory rules and configuration*")
+    st.markdown("*Comprehensive automated validation system with advanced analytics*")
     
     # Approval statistics
     approval_engine = st.session_state.approval_engine
     stats = approval_engine.get_approval_statistics(df)
     
     if stats:
+        # Basic metrics
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
@@ -1016,164 +1018,475 @@ def show_approval_system():
         
         st.divider()
         
-        # Approval status distribution
+        # Comprehensive statistics tabs
+        tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+            "📊 Overview", 
+            "🧪 Test Analysis", 
+            "👥 Patient Analysis", 
+            "⏰ Time Analysis", 
+            "🔬 Quality Control", 
+            "📋 Detailed Results"
+        ])
+        
+        with tab1:
+            show_approval_overview(stats, df)
+        
+        with tab2:
+            show_test_analysis(stats.get('test_statistics', {}))
+        
+        with tab3:
+            show_patient_analysis(stats.get('patient_statistics', {}))
+        
+        with tab4:
+            show_time_analysis(stats.get('time_statistics', {}))
+        
+        with tab5:
+            show_quality_control_analysis(stats.get('quality_control_stats', {}), stats.get('sample_quality_stats', {}))
+        
+        with tab6:
+            show_detailed_approval_results(df, stats)
+        
+        st.divider()
+    
+    else:
+        st.error("Unable to generate approval statistics")
+
+def show_approval_overview(stats, df):
+    """Display approval system overview with key metrics"""
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("📊 Approval Status Distribution")
+        approval_counts = df['approval_status'].value_counts()
+        
+        # Create pie chart
+        fig = px.pie(values=approval_counts.values, 
+                    names=approval_counts.index,
+                    title="Approval Status Distribution",
+                    color_discrete_map={
+                        'Auto Validated': '#28a745',
+                        'Manual Review Needed': '#ffc107'
+                    })
+        st.plotly_chart(fig, use_container_width=True)
+    
+    with col2:
+        st.subheader("🚨 Failed Rules Analysis")
+        failed_rules_stats = stats.get('failed_rules_stats', {})
+        
+        if failed_rules_stats:
+            failed_df = pd.DataFrame(list(failed_rules_stats.items()), 
+                                   columns=['Rule', 'Count'])
+            failed_df = failed_df.sort_values('Count', ascending=False)
+            
+            fig = px.bar(failed_df, x='Rule', y='Count',
+                       title="Most Common Failed Rules",
+                       color='Count',
+                       color_continuous_scale='Reds')
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.info("No failed rules detected")
+    
+    # Key performance indicators
+    st.subheader("📈 Key Performance Indicators")
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.metric("Overall Success Rate", f"{stats['auto_validation_rate']:.1f}%")
+    
+    with col2:
+        qc_stats = stats.get('quality_control_stats', {})
+        total_qc_failures = qc_stats.get('total_qc_failures', 0)
+        st.metric("QC Failures", total_qc_failures)
+    
+    with col3:
+        sample_quality = stats.get('sample_quality_stats', {})
+        quality_issue_rate = sample_quality.get('quality_issue_percentage', 0)
+        st.metric("Sample Quality Issues", f"{quality_issue_rate:.1f}%")
+    
+    with col4:
+        rule_analysis = stats.get('rule_analysis', {})
+        total_rule_failures = rule_analysis.get('total_rule_failures', 0)
+        st.metric("Total Rule Failures", total_rule_failures)
+
+def show_test_analysis(test_stats):
+    """Display test-specific analysis"""
+    
+    if not test_stats:
+        st.info("No test statistics available")
+        return
+    
+    st.subheader("🧪 Test Performance Analysis")
+    
+    # Convert to DataFrame for better display
+    test_df = pd.DataFrame.from_dict(test_stats, orient='index')
+    test_df = test_df.reset_index()
+    test_df.rename(columns={'index': 'Test Name'}, inplace=True)
+    
+    # Sort by manual review rate (most problematic first)
+    test_df = test_df.sort_values('manual_review_rate', ascending=False)
+    
+    # Display top problematic tests
+    st.subheader("⚠️ Most Problematic Tests")
+    problematic_tests = test_df.head(10)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # Manual review rate chart
+        fig = px.bar(problematic_tests, x='Test Name', y='manual_review_rate',
+                    title="Manual Review Rate by Test",
+                    color='manual_review_rate',
+                    color_continuous_scale='Reds')
+        fig.update_layout(xaxis_tickangle=45)
+        st.plotly_chart(fig, use_container_width=True)
+    
+    with col2:
+        # Auto validation rate chart
+        fig = px.bar(problematic_tests, x='Test Name', y='auto_validation_rate',
+                    title="Auto Validation Rate by Test",
+                    color='auto_validation_rate',
+                    color_continuous_scale='Greens')
+        fig.update_layout(xaxis_tickangle=45)
+        st.plotly_chart(fig, use_container_width=True)
+    
+    # Detailed test statistics table
+    st.subheader("📊 Detailed Test Statistics")
+    
+    # Format the dataframe for display
+    display_df = test_df.copy()
+    display_df['auto_validation_rate'] = display_df['auto_validation_rate'].round(2)
+    display_df['manual_review_rate'] = display_df['manual_review_rate'].round(2)
+    display_df['abnormal_rate'] = display_df['abnormal_rate'].round(2)
+    
+    st.dataframe(
+        display_df[['Test Name', 'total_tests', 'auto_validated', 'manual_review_needed', 
+                   'auto_validation_rate', 'manual_review_rate', 'abnormal_rate']],
+        use_container_width=True,
+        hide_index=True
+    )
+
+def show_patient_analysis(patient_stats):
+    """Display patient-specific analysis"""
+    
+    if not patient_stats:
+        st.info("No patient statistics available")
+        return
+    
+    st.subheader("👥 Patient Performance Analysis")
+    
+    # Convert to DataFrame
+    patient_df = pd.DataFrame.from_dict(patient_stats, orient='index')
+    patient_df = patient_df.reset_index()
+    patient_df.rename(columns={'index': 'Patient ID'}, inplace=True)
+    
+    # Sort by manual review rate
+    patient_df = patient_df.sort_values('manual_review_rate', ascending=False)
+    
+    # Patient demographics analysis
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("📊 Patient Demographics")
+        
+        # Age distribution
+        age_stats = patient_df.groupby('age').agg({
+            'total_tests': 'sum',
+            'auto_validated': 'sum',
+            'manual_review_needed': 'sum'
+        }).reset_index()
+        
+        age_stats['auto_validation_rate'] = (age_stats['auto_validated'] / age_stats['total_tests'] * 100).round(2)
+        
+        fig = px.bar(age_stats, x='age', y='auto_validation_rate',
+                    title="Auto Validation Rate by Age Group",
+                    color='auto_validation_rate',
+                    color_continuous_scale='Blues')
+        st.plotly_chart(fig, use_container_width=True)
+    
+    with col2:
+        # Gender distribution
+        gender_stats = patient_df.groupby('gender').agg({
+            'total_tests': 'sum',
+            'auto_validated': 'sum',
+            'manual_review_needed': 'sum'
+        }).reset_index()
+        
+        gender_stats['auto_validation_rate'] = (gender_stats['auto_validated'] / gender_stats['total_tests'] * 100).round(2)
+        
+        fig = px.bar(gender_stats, x='gender', y='auto_validation_rate',
+                    title="Auto Validation Rate by Gender",
+                    color='auto_validation_rate',
+                    color_continuous_scale='Purples')
+        st.plotly_chart(fig, use_container_width=True)
+    
+    # Most problematic patients
+    st.subheader("⚠️ Patients Requiring Most Manual Review")
+    problematic_patients = patient_df.head(10)
+    
+    st.dataframe(
+        problematic_patients[['Patient ID', 'age', 'gender', 'total_tests', 
+                             'manual_review_needed', 'manual_review_rate', 'total_samples']],
+        use_container_width=True,
+        hide_index=True
+    )
+
+def show_time_analysis(time_stats):
+    """Display time-based analysis"""
+    
+    if not time_stats:
+        st.info("No time statistics available")
+        return
+    
+    st.subheader("⏰ Time-Based Analysis")
+    
+    # Daily statistics
+    if 'daily_stats' in time_stats:
+        st.subheader("📅 Daily Performance Trends")
+        
+        daily_df = pd.DataFrame.from_dict(time_stats['daily_stats'], orient='index')
+        daily_df = daily_df.reset_index()
+        daily_df.rename(columns={'index': 'Date'}, inplace=True)
+        
         col1, col2 = st.columns(2)
         
         with col1:
-            st.subheader("📊 Approval Status Distribution")
-            approval_counts = df['approval_status'].value_counts()
-            
-            # Create pie chart
-            import plotly.express as px
-            fig = px.pie(values=approval_counts.values, 
-                        names=approval_counts.index,
-                        title="Approval Status Distribution",
-                        color_discrete_map={
-                            'Auto Validated': '#28a745',
-                            'Manual Review Needed': '#ffc107'
-                        })
+            fig = px.line(daily_df, x='Date', y='auto_validation_rate',
+                        title="Daily Auto Validation Rate Trend",
+                        markers=True)
             st.plotly_chart(fig, use_container_width=True)
         
         with col2:
-            st.subheader("🚨 Failed Rules Analysis")
-            failed_rules_stats = stats.get('failed_rules_stats', {})
+            fig = px.bar(daily_df, x='Date', y='total_tests',
+                        title="Daily Test Volume",
+                        color='total_tests',
+                        color_continuous_scale='Blues')
+            st.plotly_chart(fig, use_container_width=True)
+    
+    # Hourly statistics
+    if 'hourly_stats' in time_stats:
+        st.subheader("🕐 Hourly Performance Distribution")
+        
+        hourly_df = pd.DataFrame.from_dict(time_stats['hourly_stats'], orient='index')
+        hourly_df = hourly_df.reset_index()
+        hourly_df.rename(columns={'index': 'Hour'}, inplace=True)
+        
+        fig = px.bar(hourly_df, x='Hour', y='auto_validation_rate',
+                    title="Auto Validation Rate by Hour of Day",
+                    color='auto_validation_rate',
+                    color_continuous_scale='Viridis')
+        st.plotly_chart(fig, use_container_width=True)
+    
+    if 'error' in time_stats:
+        st.warning(f"Time analysis error: {time_stats['error']}")
+
+def show_quality_control_analysis(qc_stats, sample_quality_stats):
+    """Display quality control analysis"""
+    
+    st.subheader("🔬 Quality Control Analysis")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("📊 Rule Failure Analysis")
+        
+        if qc_stats:
+            # Create QC failure chart
+            qc_data = {
+                'Rule Type': ['IQC', 'EQC', 'Critical Value', 'Delta Check', 'Reference Range', 'Serum Index'],
+                'Failures': [
+                    qc_stats.get('iqc_failures', 0),
+                    qc_stats.get('eqc_failures', 0),
+                    qc_stats.get('critical_value_failures', 0),
+                    qc_stats.get('delta_check_failures', 0),
+                    qc_stats.get('reference_range_failures', 0),
+                    qc_stats.get('serum_index_failures', 0)
+                ]
+            }
             
-            if failed_rules_stats:
-                failed_df = pd.DataFrame(list(failed_rules_stats.items()), 
-                                       columns=['Rule', 'Count'])
-                failed_df = failed_df.sort_values('Count', ascending=False)
-                
-                fig = px.bar(failed_df, x='Rule', y='Count',
-                           title="Most Common Failed Rules",
+            qc_df = pd.DataFrame(qc_data)
+            qc_df = qc_df[qc_df['Failures'] > 0]  # Only show rules with failures
+            
+            if len(qc_df) > 0:
+                fig = px.pie(qc_df, values='Failures', names='Rule Type',
+                           title="QC Rule Failure Distribution")
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("No QC rule failures detected")
+        else:
+            st.info("No QC statistics available")
+    
+    with col2:
+        st.subheader("🧪 Sample Quality Analysis")
+        
+        if sample_quality_stats:
+            # Sample quality metrics
+            quality_data = {
+                'Quality Issue': ['Hemolysis', 'Icterus', 'Lipemia', 'Total Issues'],
+                'Count': [
+                    sample_quality_stats.get('hemolysis_samples', 0),
+                    sample_quality_stats.get('icterus_samples', 0),
+                    sample_quality_stats.get('lipemia_samples', 0),
+                    sample_quality_stats.get('total_quality_issue_samples', 0)
+                ]
+            }
+            
+            quality_df = pd.DataFrame(quality_data)
+            quality_df = quality_df[quality_df['Count'] > 0]
+            
+            if len(quality_df) > 0:
+                fig = px.bar(quality_df, x='Quality Issue', y='Count',
+                           title="Sample Quality Issues",
                            color='Count',
                            color_continuous_scale='Reds')
                 st.plotly_chart(fig, use_container_width=True)
             else:
-                st.info("No failed rules detected")
+                st.info("No sample quality issues detected")
+        else:
+            st.info("No sample quality statistics available")
+    
+    # Quality control summary metrics
+    st.subheader("📈 Quality Control Summary")
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        total_qc_failures = qc_stats.get('total_qc_failures', 0) if qc_stats else 0
+        st.metric("Total QC Failures", total_qc_failures)
+    
+    with col2:
+        quality_issue_rate = sample_quality_stats.get('quality_issue_percentage', 0) if sample_quality_stats else 0
+        st.metric("Sample Quality Issues", f"{quality_issue_rate:.1f}%")
+    
+    with col3:
+        quality_auto_rate = sample_quality_stats.get('quality_issue_auto_validation_rate', 0) if sample_quality_stats else 0
+        st.metric("Quality Issue Auto Rate", f"{quality_auto_rate:.1f}%")
+    
+    with col4:
+        hemolysis_count = sample_quality_stats.get('hemolysis_samples', 0) if sample_quality_stats else 0
+        st.metric("Hemolysis Samples", hemolysis_count)
+
+def show_detailed_approval_results(df, stats):
+    """Display detailed approval results with filtering"""
+    
+    st.subheader("📋 Detailed Approval Results")
+    
+    # Filter options
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        status_filter = st.selectbox(
+            "Filter by Approval Status",
+            options=["All", "Auto Validated", "Manual Review Needed"],
+            key="approval_status_filter"
+        )
+    
+    with col2:
+        test_filter = st.multiselect(
+            "Filter by Test Name",
+            options=sorted(df['test_name'].unique()),
+            default=[],
+            key="approval_test_filter"
+        )
+    
+    # Apply filters
+    filtered_df = df.copy()
+    
+    if status_filter != "All":
+        filtered_df = filtered_df[filtered_df['approval_status'] == status_filter]
+    
+    if test_filter:
+        filtered_df = filtered_df[filtered_df['test_name'].isin(test_filter)]
+    
+    # Display filtered results
+    if len(filtered_df) > 0:
+        # Show summary
+        st.info(f"Showing {len(filtered_df)} results")
         
-        st.divider()
-        
-        # Detailed approval results
-        st.subheader("📋 Detailed Approval Results")
-        
-        # Filter options
-        col1, col2 = st.columns(2)
+        # Pagination controls
+        col1, col2, col3 = st.columns([1, 2, 1])
         
         with col1:
-            status_filter = st.selectbox(
-                "Filter by Approval Status",
-                options=["All", "Auto Validated", "Manual Review Needed"],
-                key="approval_status_filter"
+            rows_per_page = st.selectbox(
+                "Rows per page",
+                options=[50, 100, 200, 500, 1000],
+                index=1,  # Default to 100
+                key="approval_rows_per_page"
             )
         
         with col2:
-            test_filter = st.multiselect(
-                "Filter by Test Name",
-                options=sorted(df['test_name'].unique()),
-                default=[],
-                key="approval_test_filter"
+            total_pages = (len(filtered_df) + rows_per_page - 1) // rows_per_page
+            if total_pages > 1:
+                page = st.selectbox(
+                    "Page",
+                    options=list(range(1, total_pages + 1)),
+                    key="approval_page"
+                )
+            else:
+                page = 1
+        
+        # Calculate start and end indices
+        start_idx = (page - 1) * rows_per_page
+        end_idx = min(start_idx + rows_per_page, len(filtered_df))
+        
+        with col3:
+            st.write(f"Page {page} of {total_pages}")
+            st.write(f"Showing {start_idx + 1}-{end_idx} of {len(filtered_df)}")
+        
+        # Get page data
+        page_df = filtered_df.iloc[start_idx:end_idx]
+        
+        # Display table with approval information
+        display_columns = ['patient_id', 'sample_id', 'test_name', 'test_value', 
+                         'test_flag', 'approval_status', 'approval_comments']
+        
+        display_df = page_df[display_columns].copy()
+        
+        # Add color coding for approval status
+        def style_approval_status(val):
+            if val == 'Auto Validated':
+                return 'background-color: #d4edda; color: #155724'
+            elif val == 'Manual Review Needed':
+                return 'background-color: #fff3cd; color: #856404'
+            else:
+                return ''
+        
+        styled_df = display_df.style.applymap(style_approval_status, subset=['approval_status'])
+        
+        st.dataframe(
+            styled_df,
+            use_container_width=True,
+            height=min(1000, len(display_df) * 35 + 50),
+            hide_index=True
+        )
+        
+        # Download buttons
+        col_download1, col_download2 = st.columns(2)
+        
+        with col_download1:
+            # Download current page
+            csv_page = page_df.to_csv(index=False)
+            st.download_button(
+                label="💾 Download Current Page",
+                data=csv_page,
+                file_name=f"approval_results_page_{page}.csv",
+                mime="text/csv",
+                use_container_width=True
             )
         
-        # Apply filters
-        filtered_df = df.copy()
-        
-        if status_filter != "All":
-            filtered_df = filtered_df[filtered_df['approval_status'] == status_filter]
-        
-        if test_filter:
-            filtered_df = filtered_df[filtered_df['test_name'].isin(test_filter)]
-        
-        # Display filtered results
-        if len(filtered_df) > 0:
-            # Show summary
-            st.info(f"Showing {len(filtered_df)} results")
-            
-            # Pagination controls
-            col1, col2, col3 = st.columns([1, 2, 1])
-            
-            with col1:
-                rows_per_page = st.selectbox(
-                    "Rows per page",
-                    options=[50, 100, 200, 500, 1000],
-                    index=1,  # Default to 100
-                    key="approval_rows_per_page"
-                )
-            
-            with col2:
-                total_pages = (len(filtered_df) + rows_per_page - 1) // rows_per_page
-                if total_pages > 1:
-                    page = st.selectbox(
-                        "Page",
-                        options=list(range(1, total_pages + 1)),
-                        key="approval_page"
-                    )
-                else:
-                    page = 1
-            
-            # Calculate start and end indices
-            start_idx = (page - 1) * rows_per_page
-            end_idx = min(start_idx + rows_per_page, len(filtered_df))
-            
-            with col3:
-                st.write(f"Page {page} of {total_pages}")
-                st.write(f"Showing {start_idx + 1}-{end_idx} of {len(filtered_df)}")
-            
-            # Get page data
-            page_df = filtered_df.iloc[start_idx:end_idx]
-            
-            # Display table with approval information
-            display_columns = ['patient_id', 'sample_id', 'test_name', 'test_value', 
-                             'test_flag', 'approval_status', 'approval_comments']
-            
-            display_df = page_df[display_columns].copy()
-            
-            # Add color coding for approval status
-            def style_approval_status(val):
-                if val == 'Auto Validated':
-                    return 'background-color: #d4edda; color: #155724'
-                elif val == 'Manual Review Needed':
-                    return 'background-color: #fff3cd; color: #856404'
-                else:
-                    return ''
-            
-            styled_df = display_df.style.applymap(style_approval_status, subset=['approval_status'])
-            
-            st.dataframe(
-                styled_df,
-                use_container_width=True,
-                height=min(1000, len(display_df) * 35 + 50),
-                hide_index=True
+        with col_download2:
+            # Download all filtered results
+            csv_all = filtered_df.to_csv(index=False)
+            st.download_button(
+                label="💾 Download All Results",
+                data=csv_all,
+                file_name="approval_results_all.csv",
+                mime="text/csv",
+                use_container_width=True
             )
-            
-            # Download buttons
-            col_download1, col_download2 = st.columns(2)
-            
-            with col_download1:
-                # Download current page
-                csv_page = page_df.to_csv(index=False)
-                st.download_button(
-                    label="💾 Download Current Page",
-                    data=csv_page,
-                    file_name=f"approval_results_page_{page}.csv",
-                    mime="text/csv",
-                    use_container_width=True
-                )
-            
-            with col_download2:
-                # Download all filtered results
-                csv_all = filtered_df.to_csv(index=False)
-                st.download_button(
-                    label="💾 Download All Results",
-                    data=csv_all,
-                    file_name="approval_results_all.csv",
-                    mime="text/csv",
-                    use_container_width=True
-                )
-        else:
-            st.warning("No results match the selected filters")
-    
     else:
-        st.error("Unable to generate approval statistics")
+        st.warning("No results match the selected filters")
 
 def show_help():
     """Display help documentation in Turkish"""
@@ -1393,11 +1706,6 @@ def show_help():
     col_contact1, col_contact2 = st.columns(2)
     
     with col_contact1:
-        st.markdown("""
-        **📞 Telefon**: +90 506 940 6568
-        """)
-    
-    with col_contact2:
         st.markdown("""
         **💻 Email**: drhabibozdemir@gmail.com
         """)
