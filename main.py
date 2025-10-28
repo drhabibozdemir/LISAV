@@ -1294,10 +1294,9 @@ def show_quality_control_analysis(qc_stats, sample_quality_stats):
         if qc_stats:
             # Create QC failure chart
             qc_data = {
-                'Rule Type': ['IQC', 'EQC', 'Critical Value', 'Delta Check', 'Reference Range', 'Serum Index'],
+                'Rule Type': ['IQC', 'Critical Value', 'Delta Check', 'Reference Range', 'Serum Index'],
                 'Failures': [
                     qc_stats.get('iqc_failures', 0),
-                    qc_stats.get('eqc_failures', 0),
                     qc_stats.get('critical_value_failures', 0),
                     qc_stats.get('delta_check_failures', 0),
                     qc_stats.get('reference_range_failures', 0),

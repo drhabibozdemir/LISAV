@@ -113,7 +113,6 @@ class ApprovalEngine:
         # Apply rules in priority order
         rules_to_check = [
             ('IQC', self._check_iqc_rule),
-            ('EQC', self._check_eqc_rule),
             ('critical_value', self._check_critical_value_rule),
             ('delta_check', self._check_delta_check_rule),
             ('reference_range', self._check_reference_range_rule),
@@ -153,16 +152,6 @@ class ApprovalEngine:
             return {'passed': True, 'message': 'IQC check passed - test approved'}
         else:
             return {'passed': False, 'message': 'IQC check failed - manual review needed'}
-    
-    def _check_eqc_rule(self, test_result: pd.Series, test_config: Dict) -> Dict:
-        """Check EQC rule"""
-        eqc_value = test_config.get('EQC', False)
-        
-        # EQC değeri 1 ise onaylanmaya uygun, 0 ise manuel review gerekli
-        if eqc_value == 1 or eqc_value is True:
-            return {'passed': True, 'message': 'EQC check passed - test approved'}
-        else:
-            return {'passed': False, 'message': 'EQC check failed - manual review needed'}
     
     def _check_critical_value_rule(self, test_result: pd.Series, test_config: Dict) -> Dict:
         """Check critical value rule"""
@@ -402,9 +391,8 @@ class ApprovalEngine:
         """Get quality control related statistics"""
         qc_stats = {}
         
-        # IQC/EQC statistics
+        # IQC statistics
         iqc_failed = len(df[df['failed_rules'].str.contains('IQC', na=False)])
-        eqc_failed = len(df[df['failed_rules'].str.contains('EQC', na=False)])
         critical_failed = len(df[df['failed_rules'].str.contains('critical_value', na=False)])
         delta_failed = len(df[df['failed_rules'].str.contains('delta_check', na=False)])
         reference_failed = len(df[df['failed_rules'].str.contains('reference_range', na=False)])
@@ -412,12 +400,11 @@ class ApprovalEngine:
         
         qc_stats = {
             'iqc_failures': iqc_failed,
-            'eqc_failures': eqc_failed,
             'critical_value_failures': critical_failed,
             'delta_check_failures': delta_failed,
             'reference_range_failures': reference_failed,
             'serum_index_failures': serum_index_failed,
-            'total_qc_failures': iqc_failed + eqc_failed + critical_failed + delta_failed + reference_failed + serum_index_failed
+            'total_qc_failures': iqc_failed + critical_failed + delta_failed + reference_failed + serum_index_failed
         }
         
         return qc_stats

@@ -33,7 +33,7 @@ class ConfigManager:
             self.dictionary_path = possible_paths[0]  # Default fallback
         
         self.config_data = None
-        self.boolean_columns = ['hemolysis', 'icterus', 'lipemia', 'IQC', 'EQC', 'analyzer_flag']
+        self.boolean_columns = ['hemolysis', 'icterus', 'lipemia', 'IQC', 'analyzer_flag']
         self.numeric_columns = ['ref_min', 'ref_max', 'delta_check_min', 'delta_check_max', 
                                'critical_min', 'critical_max', 'delta_check_interval']
     
