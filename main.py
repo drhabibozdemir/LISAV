@@ -19,364 +19,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Force light theme - Override all browser/system settings
-st.markdown("""
-<style>
-    /* Force light theme globally */
-    :root {
-        --primary-color: #ff4b4b !important;
-        --background-color: #ffffff !important;
-        --secondary-background-color: #f0f2f6 !important;
-        --text-color: #262730 !important;
-        --font: "Source Sans Pro", sans-serif !important;
-    }
-    
-    /* Override browser dark mode */
-    @media (prefers-color-scheme: dark) {
-        :root {
-            --primary-color: #ff4b4b !important;
-            --background-color: #ffffff !important;
-            --secondary-background-color: #f0f2f6 !important;
-            --text-color: #262730 !important;
-        }
-    }
-    
-    /* Main app styling */
-    .stApp {
-        color-scheme: light !important;
-        background-color: #ffffff !important;
-    }
-    
-    .stApp > header {
-        background-color: #ffffff !important;
-        border-bottom: 1px solid #e6e9ef !important;
-    }
-    
-    .stApp > div {
-        background-color: #ffffff !important;
-    }
-    
-    /* Sidebar styling */
-    .stSidebar {
-        background-color: #f0f2f6 !important;
-    }
-    
-    .stSidebar > div {
-        background-color: #f0f2f6 !important;
-    }
-    
-    .stSidebar .stMarkdown {
-        color: #262730 !important;
-    }
-    
-    /* Input elements */
-    .stSelectbox > div > div {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-        border: 1px solid #cccccc !important;
-    }
-    
-    .stTextInput > div > div > input {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-        border: 1px solid #cccccc !important;
-    }
-    
-    .stTextArea > div > div > textarea {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-        border: 1px solid #cccccc !important;
-    }
-    
-    .stNumberInput > div > div > input {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-        border: 1px solid #cccccc !important;
-    }
-    
-    .stMultiSelect > div > div {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-        border: 1px solid #cccccc !important;
-    }
-    
-    .stCheckbox > div > div {
-        background-color: #ffffff !important;
-    }
-    
-    .stRadio > div > div {
-        background-color: #ffffff !important;
-    }
-    
-    /* Data elements */
-    .stDataFrame {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-    }
-    
-    .stDataFrame table {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-    }
-    
-    .stDataFrame th {
-        background-color: #f0f2f6 !important;
-        color: #262730 !important;
-    }
-    
-    .stDataFrame td {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-    }
-    
-    .stMetric {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-    }
-    
-    /* Alert styling */
-    .stAlert {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-    }
-    
-    .stSuccess {
-        background-color: #d4edda !important;
-        color: #155724 !important;
-        border: 1px solid #c3e6cb !important;
-    }
-    
-    .stWarning {
-        background-color: #fff3cd !important;
-        color: #856404 !important;
-        border: 1px solid #ffeaa7 !important;
-    }
-    
-    .stError {
-        background-color: #f8d7da !important;
-        color: #721c24 !important;
-        border: 1px solid #f5c6cb !important;
-    }
-    
-    .stInfo {
-        background-color: #d1ecf1 !important;
-        color: #0c5460 !important;
-        border: 1px solid #bee5eb !important;
-    }
-    
-    /* Button styling */
-    .stButton > button {
-        background-color: #ff4b4b !important;
-        color: #ffffff !important;
-        border: none !important;
-    }
-    
-    .stButton > button:hover {
-        background-color: #ff6b6b !important;
-        color: #ffffff !important;
-    }
-    
-    /* Tab styling */
-    .stTabs [data-baseweb="tab-list"] {
-        background-color: #f0f2f6 !important;
-    }
-    
-    .stTabs [data-baseweb="tab"] {
-        background-color: #f0f2f6 !important;
-        color: #262730 !important;
-    }
-    
-    .stTabs [aria-selected="true"] {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-    }
-    
-    /* File uploader */
-    .stFileUploader > div {
-        background-color: #ffffff !important;
-        border: 1px solid #cccccc !important;
-    }
-    
-    /* Progress bar */
-    .stProgress > div > div {
-        background-color: #f0f2f6 !important;
-    }
-    
-    .stProgress > div > div > div {
-        background-color: #ff4b4b !important;
-    }
-    
-    /* Expander */
-    .streamlit-expanderHeader {
-        background-color: #f0f2f6 !important;
-        color: #262730 !important;
-    }
-    
-    .streamlit-expanderContent {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-    }
-    
-    /* Plotly charts background */
-    .js-plotly-plot {
-        background-color: #ffffff !important;
-    }
-    
-    /* Override any dark mode styles */
-    [data-testid="stAppViewContainer"] {
-        background-color: #ffffff !important;
-    }
-    
-    [data-testid="stSidebar"] {
-        background-color: #f0f2f6 !important;
-    }
-    
-    /* Force text colors */
-    h1, h2, h3, h4, h5, h6, p, span, div, label {
-        color: #262730 !important;
-    }
-    
-    /* Override any inherited dark styles */
-    * {
-        color-scheme: light !important;
-    }
-    
-    /* Streamlit-tree-select component styling */
-    .st-tree-select,
-    .st-tree-select * {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-    }
-    
-    .st-tree-select [role="tree"] {
-        background-color: #ffffff !important;
-    }
-    
-    .st-tree-select [role="treeitem"] {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-    }
-    
-    .st-tree-select [role="treeitem"]:hover {
-        background-color: #f0f2f6 !important;
-    }
-    
-    .st-tree-select label {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-    }
-    
-    /* Data grid / Dataframe specific styling */
-    .stDataFrame,
-    .stDataFrame * {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-    }
-    
-    .stDataFrame thead {
-        background-color: #f0f2f6 !important;
-        color: #262730 !important;
-    }
-    
-    .stDataFrame tbody {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-    }
-    
-    .stDataFrame tr {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-    }
-    
-    .stDataFrame tr:hover {
-        background-color: #f0f2f6 !important;
-    }
-    
-    .stDataFrame th,
-    .stDataFrame td {
-        background-color: inherit !important;
-        color: #262730 !important;
-        border-color: #e6e9ef !important;
-    }
-    
-    /* Override any Streamlit dynamic theming */
-    [data-testid="stDataFrame"],
-    [data-testid="stDataFrame"] * {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-    }
-    
-    /* Force checkbox colors */
-    .stCheckbox label,
-    .stCheckbox input[type="checkbox"] {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-    }
-    
-    /* Tree select checkbox styling */
-    input[type="checkbox"] {
-        accent-color: #ff4b4b !important;
-    }
-    
-    /* Ensure all interactive elements are light */
-    div[role="tree"],
-    div[role="group"],
-    div[role="treeitem"],
-    span[role="button"] {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-    }
-    
-    /* Data editor specific styling */
-    .stDataEditor,
-    .stDataEditor * {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-    }
-    
-    .stDataEditor table {
-        background-color: #ffffff !important;
-    }
-    
-    .stDataEditor thead {
-        background-color: #f0f2f6 !important;
-        color: #262730 !important;
-    }
-    
-    .stDataEditor tbody {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-    }
-    
-    .stDataEditor td,
-    .stDataEditor th {
-        background-color: inherit !important;
-        color: #262730 !important;
-        border-color: #e6e9ef !important;
-    }
-    
-    /* Override any data grid specific dark mode styles */
-    .grid-container,
-    .data-grid,
-    .data-grid * {
-        background-color: #ffffff !important;
-        color: #262730 !important;
-    }
-    
-    /* Force light mode for all nested elements */
-    div,
-    span,
-    p,
-    td,
-    th,
-    tr,
-    table {
-        background-color: inherit !important;
-        color: inherit !important;
-    }
-</style>
-""", unsafe_allow_html=True)
-
 # Custom CSS
 st.markdown("""
 <style>
@@ -460,8 +102,8 @@ def main():
                     data_loader = DataLoader()
                     df = data_loader.load_sample_data()
                     
-                    # Process approval system
-                    with st.spinner("Processing approval system..."):
+                    # Process auto verification system
+                    with st.spinner("Processing auto verification system..."):
                         approval_engine = st.session_state.approval_engine
                         df_with_approval = approval_engine.process_test_results(df)
                     
@@ -493,8 +135,8 @@ def main():
                     data_loader = DataLoader()
                     df = data_loader.load_csv(uploaded_file)
                     
-                    # Process approval system
-                    with st.spinner("Processing approval system..."):
+                    # Process auto verification system
+                    with st.spinner("Processing auto verification system..."):
                         approval_engine = st.session_state.approval_engine
                         df_with_approval = approval_engine.process_test_results(df)
                     
@@ -517,8 +159,8 @@ def main():
                     data_loader = DataLoader()
                     df = data_loader.load_sample_data()
                     
-                    # Process approval system
-                    with st.spinner("Processing approval system..."):
+                    # Process auto verification system
+                    with st.spinner("Processing auto verification system..."):
                         approval_engine = st.session_state.approval_engine
                         df_with_approval = approval_engine.process_test_results(df)
                     
@@ -559,7 +201,7 @@ def main():
             show_data_explorer()
         elif st.session_state.current_page == "⚙️ Configuration":
             show_configuration()
-        elif st.session_state.current_page == "✅ Approval System":
+        elif st.session_state.current_page == "✅ Auto Verification System":
             show_approval_system()
         elif st.session_state.current_page == "❓ Help":
             show_help()
@@ -1341,17 +983,17 @@ def show_configuration():
             )
 
 def show_approval_system():
-    """Display comprehensive approval system interface"""
+    """Display comprehensive auto verification system interface"""
     df = st.session_state.data
     
     if df is None:
         st.error("No data available for approval processing")
         return
     
-    st.subheader("✅ Laboratory Approval System")
+    st.subheader("✅ Laboratory Auto Verification System")
     st.markdown("*Comprehensive automated validation system with advanced analytics*")
     
-    # Approval statistics
+    # Auto verification statistics
     approval_engine = st.session_state.approval_engine
     stats = approval_engine.get_approval_statistics(df)
     
@@ -1410,41 +1052,41 @@ def show_approval_system():
         st.error("Unable to generate approval statistics")
 
 def show_approval_overview(stats, df):
-    """Display approval system overview with key metrics"""
+    """Display auto verification system overview with key metrics"""
     
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.subheader("📊 Approval Status Distribution")
-        approval_counts = df['approval_status'].value_counts()
+        col1, col2 = st.columns(2)
         
-        # Create pie chart
-        fig = px.pie(values=approval_counts.values, 
-                    names=approval_counts.index,
-                    title="Approval Status Distribution",
-                    color_discrete_map={
-                        'Auto Validated': '#28a745',
-                        'Manual Review Needed': '#ffc107'
-                    })
-        st.plotly_chart(fig, use_container_width=True)
-    
-    with col2:
-        st.subheader("🚨 Failed Rules Analysis")
-        failed_rules_stats = stats.get('failed_rules_stats', {})
-        
-        if failed_rules_stats:
-            failed_df = pd.DataFrame(list(failed_rules_stats.items()), 
-                                   columns=['Rule', 'Count'])
-            failed_df = failed_df.sort_values('Count', ascending=False)
+        with col1:
+            st.subheader("📊 Auto Verification Status Distribution")
+            approval_counts = df['approval_status'].value_counts()
             
-            fig = px.bar(failed_df, x='Rule', y='Count',
-                       title="Most Common Failed Rules",
-                       color='Count',
-                       color_continuous_scale='Reds')
+            # Create pie chart
+            fig = px.pie(values=approval_counts.values, 
+                        names=approval_counts.index,
+                        title="Auto Verification Status Distribution",
+                        color_discrete_map={
+                            'Auto Validated': '#28a745',
+                            'Manual Review Needed': '#ffc107'
+                        })
             st.plotly_chart(fig, use_container_width=True)
-        else:
-            st.info("No failed rules detected")
-    
+        
+        with col2:
+            st.subheader("🚨 Failed Rules Analysis")
+            failed_rules_stats = stats.get('failed_rules_stats', {})
+            
+            if failed_rules_stats:
+                failed_df = pd.DataFrame(list(failed_rules_stats.items()), 
+                                       columns=['Rule', 'Count'])
+                failed_df = failed_df.sort_values('Count', ascending=False)
+                
+                fig = px.bar(failed_df, x='Rule', y='Count',
+                           title="Most Common Failed Rules",
+                           color='Count',
+                           color_continuous_scale='Reds')
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("No failed rules detected")
+        
     # Key performance indicators
     st.subheader("📈 Key Performance Indicators")
     
@@ -1726,82 +1368,82 @@ def show_quality_control_analysis(qc_stats, sample_quality_stats):
         st.metric("Hemolysis Samples", hemolysis_count)
 
 def show_detailed_approval_results(df, stats):
-    """Display detailed approval results with filtering"""
+    """Display detailed auto verification results with filtering"""
     
-    st.subheader("📋 Detailed Approval Results")
-    
-    # Filter options
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        status_filter = st.selectbox(
-            "Filter by Approval Status",
-            options=["All", "Auto Validated", "Manual Review Needed"],
-            key="approval_status_filter"
-        )
-    
-    with col2:
-        test_filter = st.multiselect(
-            "Filter by Test Name",
-            options=sorted(df['test_name'].unique()),
-            default=[],
-            key="approval_test_filter"
-        )
-    
-    # Apply filters
-    filtered_df = df.copy()
-    
-    if status_filter != "All":
-        filtered_df = filtered_df[filtered_df['approval_status'] == status_filter]
-    
-    if test_filter:
-        filtered_df = filtered_df[filtered_df['test_name'].isin(test_filter)]
-    
-    # Display filtered results
-    if len(filtered_df) > 0:
-        # Show summary
-        st.info(f"Showing {len(filtered_df)} results")
+    st.subheader("📋 Detailed Auto Verification Results")
         
-        # Pagination controls
-        col1, col2, col3 = st.columns([1, 2, 1])
+        # Filter options
+        col1, col2 = st.columns(2)
         
         with col1:
-            rows_per_page = st.selectbox(
-                "Rows per page",
-                options=[50, 100, 200, 500, 1000],
-                index=1,  # Default to 100
-                key="approval_rows_per_page"
+            status_filter = st.selectbox(
+                "Filter by Auto Verification Status",
+                options=["All", "Auto Validated", "Manual Review Needed"],
+                key="approval_status_filter"
             )
         
         with col2:
-            total_pages = (len(filtered_df) + rows_per_page - 1) // rows_per_page
-            if total_pages > 1:
-                page = st.selectbox(
-                    "Page",
-                    options=list(range(1, total_pages + 1)),
-                    key="approval_page"
+            test_filter = st.multiselect(
+                "Filter by Test Name",
+                options=sorted(df['test_name'].unique()),
+                default=[],
+                key="approval_test_filter"
+            )
+        
+        # Apply filters
+        filtered_df = df.copy()
+        
+        if status_filter != "All":
+            filtered_df = filtered_df[filtered_df['approval_status'] == status_filter]
+        
+        if test_filter:
+            filtered_df = filtered_df[filtered_df['test_name'].isin(test_filter)]
+        
+        # Display filtered results
+        if len(filtered_df) > 0:
+            # Show summary
+            st.info(f"Showing {len(filtered_df)} results")
+            
+            # Pagination controls
+            col1, col2, col3 = st.columns([1, 2, 1])
+            
+            with col1:
+                rows_per_page = st.selectbox(
+                    "Rows per page",
+                    options=[50, 100, 200, 500, 1000],
+                    index=1,  # Default to 100
+                    key="approval_rows_per_page"
                 )
-            else:
-                page = 1
-        
-        # Calculate start and end indices
-        start_idx = (page - 1) * rows_per_page
-        end_idx = min(start_idx + rows_per_page, len(filtered_df))
-        
-        with col3:
-            st.write(f"Page {page} of {total_pages}")
-            st.write(f"Showing {start_idx + 1}-{end_idx} of {len(filtered_df)}")
-        
-        # Get page data
-        page_df = filtered_df.iloc[start_idx:end_idx]
-        
-        # Display table with approval information
-        display_columns = ['patient_id', 'sample_id', 'test_name', 'test_value', 
-                         'test_flag', 'approval_status', 'approval_comments']
-        
-        display_df = page_df[display_columns].copy()
-        
-        # Add color coding for approval status
+            
+            with col2:
+                total_pages = (len(filtered_df) + rows_per_page - 1) // rows_per_page
+                if total_pages > 1:
+                    page = st.selectbox(
+                        "Page",
+                        options=list(range(1, total_pages + 1)),
+                        key="approval_page"
+                    )
+                else:
+                    page = 1
+            
+            # Calculate start and end indices
+            start_idx = (page - 1) * rows_per_page
+            end_idx = min(start_idx + rows_per_page, len(filtered_df))
+            
+            with col3:
+                st.write(f"Page {page} of {total_pages}")
+                st.write(f"Showing {start_idx + 1}-{end_idx} of {len(filtered_df)}")
+            
+            # Get page data
+            page_df = filtered_df.iloc[start_idx:end_idx]
+            
+            # Display table with auto verification information
+            display_columns = ['patient_id', 'sample_id', 'test_name', 'test_value', 
+                             'test_flag', 'approval_status', 'approval_comments']
+            
+            display_df = page_df[display_columns].copy()
+            
+        # Add color coding for auto verification status
         def style_approval_status(val):
             if val == 'Auto Validated':
                 return 'background-color: #d4edda; color: #155724'
@@ -1809,42 +1451,42 @@ def show_detailed_approval_results(df, stats):
                 return 'background-color: #fff3cd; color: #856404'
             else:
                 return ''
-        
-        styled_df = display_df.style.applymap(style_approval_status, subset=['approval_status'])
-        
-        st.dataframe(
-            styled_df,
-            use_container_width=True,
-            height=min(1000, len(display_df) * 35 + 50),
-            hide_index=True
-        )
-        
-        # Download buttons
-        col_download1, col_download2 = st.columns(2)
-        
-        with col_download1:
-            # Download current page
-            csv_page = page_df.to_csv(index=False)
-            st.download_button(
-                label="💾 Download Current Page",
-                data=csv_page,
-                file_name=f"approval_results_page_{page}.csv",
-                mime="text/csv",
-                use_container_width=True
+            
+            styled_df = display_df.style.applymap(style_approval_status, subset=['approval_status'])
+            
+            st.dataframe(
+                styled_df,
+                use_container_width=True,
+                height=min(1000, len(display_df) * 35 + 50),
+                hide_index=True
             )
-        
-        with col_download2:
-            # Download all filtered results
-            csv_all = filtered_df.to_csv(index=False)
-            st.download_button(
-                label="💾 Download All Results",
-                data=csv_all,
-                file_name="approval_results_all.csv",
-                mime="text/csv",
-                use_container_width=True
-            )
-    else:
-        st.warning("No results match the selected filters")
+            
+            # Download buttons
+            col_download1, col_download2 = st.columns(2)
+            
+            with col_download1:
+                # Download current page
+                csv_page = page_df.to_csv(index=False)
+                st.download_button(
+                    label="💾 Download Current Page",
+                    data=csv_page,
+                    file_name=f"auto_verification_results_page_{page}.csv",
+                    mime="text/csv",
+                    use_container_width=True
+                )
+            
+            with col_download2:
+                # Download all filtered results
+                csv_all = filtered_df.to_csv(index=False)
+                st.download_button(
+                    label="💾 Download All Results",
+                    data=csv_all,
+                    file_name="auto_verification_results_all.csv",
+                    mime="text/csv",
+                    use_container_width=True
+                )
+        else:
+            st.warning("No results match the selected filters")
 
 def show_help():
     """Display help documentation in Turkish"""
@@ -1870,7 +1512,7 @@ def show_help():
         st.markdown("### 🎯 Özellikler")
         st.success("""
         ✅ Veri Yükleme ve Yönetimi
-        ✅ Onay Destek Sistemi
+        ✅ Otomatik Doğrulama Sistemi
         ✅ Kural Motoru
         ✅ İstatistiksel Analiz
         ✅ Görselleştirme
@@ -1882,7 +1524,7 @@ def show_help():
     # Sekmeler
     st.markdown("### 🧭 Sekmeler ve Kullanım")
     
-    tab1, tab2, tab3, tab4 = st.tabs(["📋 Overview", "🔍 Data Explorer", "⚙️ Configuration", "✅ Approval System"])
+    tab1, tab2, tab3, tab4 = st.tabs(["📋 Overview", "🔍 Data Explorer", "⚙️ Configuration", "✅ Auto Verification System"])
     
     with tab1:
         st.markdown("""
@@ -1942,9 +1584,9 @@ def show_help():
     
     with tab4:
         st.markdown("""
-        #### ✅ Approval System Sekmesi
+        #### ✅ Auto Verification System Sekmesi
         
-        **Amaç**: Laboratuvar onay destek sistemini kullanarak test sonuçlarını otomatik onaylama.
+        **Amaç**: Laboratuvar otomatik doğrulama sistemini kullanarak test sonuçlarını otomatik doğrulama.
         
         **Özellikler**:
         - Auto Validated: Tüm kurallar geçti
@@ -2000,7 +1642,7 @@ def show_help():
         - İlgili test etkileniyorsa uyarı verilir
         
         **Onay Durumları**:
-        - ✅ Auto Validated: Otomatik onaylandı
+        - ✅ Auto Validated: Otomatik doğrulandı
         - ⚠️ Manual Review: Manuel inceleme gerekli
         """)
     
@@ -2028,7 +1670,7 @@ def show_help():
         5. İstatistikler yeniden hesaplanacak
         """)
     
-    with st.expander("🔬 Onay sistemi nasıl çalışır?"):
+    with st.expander("🔬 Otomatik doğrulama sistemi nasıl çalışır?"):
         st.markdown("""
         1. Her test sonucu için kurallar kontrol edilir
         2. Öncelik sırasına göre kural değerlendirmesi yapılır
@@ -2039,7 +1681,7 @@ def show_help():
     
     with st.expander("📊 İstatistikler nasıl yorumlanır?"):
         st.markdown("""
-        - **Auto Validated**: Otomatik onaylanan test oranı
+        - **Auto Validated**: Otomatik doğrulanan test oranı
         - **Manual Review**: Manuel inceleme gereken test oranı
         - **Failed Rules**: En sık başarısız olan kurallar
         - Pie chart ile durum dağılımı görüntülenir

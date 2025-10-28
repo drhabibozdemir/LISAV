@@ -1,6 +1,6 @@
 """
-Approval Engine Module for LIS
-Handles laboratory test approval system with rule engine
+Auto Verification Engine Module for LIS
+Handles laboratory test auto verification system with rule engine
 """
 import pandas as pd
 import streamlit as st
@@ -9,11 +9,11 @@ from .rule_validator import RuleValidator
 
 
 class ApprovalEngine:
-    """Main approval engine that processes laboratory test results"""
+    """Main auto verification engine that processes laboratory test results"""
     
     def __init__(self, config_manager):
         """
-        Initialize approval engine
+        Initialize auto verification engine
         
         Args:
             config_manager: ConfigManager instance for dictionary data
@@ -33,13 +33,13 @@ class ApprovalEngine:
     
     def process_test_results(self, df: pd.DataFrame) -> pd.DataFrame:
         """
-        Process test results and add approval status
+        Process test results and add auto verification status
         
         Args:
             df: DataFrame with test results
             
         Returns:
-            DataFrame with added approval status and comments
+            DataFrame with added auto verification status and comments
         """
         if df is None or len(df) == 0:
             return df
@@ -47,7 +47,7 @@ class ApprovalEngine:
         # Get configuration data
         config_df = self.config_manager.get_config_data()
         if config_df is None:
-            st.error("Configuration data not available for approval processing")
+            st.error("Configuration data not available for auto verification processing")
             return df
         
         # Create a copy to avoid modifying original
@@ -242,13 +242,13 @@ class ApprovalEngine:
     
     def get_approval_statistics(self, df: pd.DataFrame) -> Dict:
         """
-        Get comprehensive approval statistics
+        Get comprehensive auto verification statistics
         
         Args:
-            df: DataFrame with approval results
+            df: DataFrame with auto verification results
             
         Returns:
-            Dictionary with comprehensive approval statistics
+            Dictionary with comprehensive auto verification statistics
         """
         if df is None or len(df) == 0:
             return {}
