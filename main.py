@@ -19,6 +19,72 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Force light theme
+st.markdown("""
+<style>
+    .stApp {
+        color-scheme: light;
+    }
+    .stApp > header {
+        background-color: transparent;
+    }
+    .stApp > div {
+        background-color: white;
+    }
+    .stSidebar > div {
+        background-color: #f8f9fa;
+    }
+    .stSidebar .stMarkdown {
+        color: #333;
+    }
+    .stSelectbox > div > div {
+        background-color: white;
+        color: #333;
+    }
+    .stTextInput > div > div > input {
+        background-color: white;
+        color: #333;
+    }
+    .stTextArea > div > div > textarea {
+        background-color: white;
+        color: #333;
+    }
+    .stNumberInput > div > div > input {
+        background-color: white;
+        color: #333;
+    }
+    .stMultiSelect > div > div {
+        background-color: white;
+        color: #333;
+    }
+    .stDataFrame {
+        background-color: white;
+    }
+    .stMetric {
+        background-color: white;
+    }
+    .stAlert {
+        background-color: white;
+    }
+    .stSuccess {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    .stWarning {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+    .stError {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    .stInfo {
+        background-color: #d1ecf1;
+        color: #0c5460;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # Custom CSS
 st.markdown("""
 <style>
@@ -78,7 +144,7 @@ def main():
                 "📋 Overview",
                 "🔍 Data Explorer",
                 "⚙️ Configuration",
-                "✅ Approval System",
+                "✅ Auto Verification System",
                 "❓ Help"
             ]
             
