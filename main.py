@@ -19,68 +19,226 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Force light theme
+# Force light theme - Override all browser/system settings
 st.markdown("""
 <style>
+    /* Force light theme globally */
+    :root {
+        --primary-color: #ff4b4b !important;
+        --background-color: #ffffff !important;
+        --secondary-background-color: #f0f2f6 !important;
+        --text-color: #262730 !important;
+        --font: "Source Sans Pro", sans-serif !important;
+    }
+    
+    /* Override browser dark mode */
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --primary-color: #ff4b4b !important;
+            --background-color: #ffffff !important;
+            --secondary-background-color: #f0f2f6 !important;
+            --text-color: #262730 !important;
+        }
+    }
+    
+    /* Main app styling */
     .stApp {
-        color-scheme: light;
+        color-scheme: light !important;
+        background-color: #ffffff !important;
     }
+    
     .stApp > header {
-        background-color: transparent;
+        background-color: #ffffff !important;
+        border-bottom: 1px solid #e6e9ef !important;
     }
+    
     .stApp > div {
-        background-color: white;
+        background-color: #ffffff !important;
     }
+    
+    /* Sidebar styling */
+    .stSidebar {
+        background-color: #f0f2f6 !important;
+    }
+    
     .stSidebar > div {
-        background-color: #f8f9fa;
+        background-color: #f0f2f6 !important;
     }
+    
     .stSidebar .stMarkdown {
-        color: #333;
+        color: #262730 !important;
     }
+    
+    /* Input elements */
     .stSelectbox > div > div {
-        background-color: white;
-        color: #333;
+        background-color: #ffffff !important;
+        color: #262730 !important;
+        border: 1px solid #cccccc !important;
     }
+    
     .stTextInput > div > div > input {
-        background-color: white;
-        color: #333;
+        background-color: #ffffff !important;
+        color: #262730 !important;
+        border: 1px solid #cccccc !important;
     }
+    
     .stTextArea > div > div > textarea {
-        background-color: white;
-        color: #333;
+        background-color: #ffffff !important;
+        color: #262730 !important;
+        border: 1px solid #cccccc !important;
     }
+    
     .stNumberInput > div > div > input {
-        background-color: white;
-        color: #333;
+        background-color: #ffffff !important;
+        color: #262730 !important;
+        border: 1px solid #cccccc !important;
     }
+    
     .stMultiSelect > div > div {
-        background-color: white;
-        color: #333;
+        background-color: #ffffff !important;
+        color: #262730 !important;
+        border: 1px solid #cccccc !important;
     }
+    
+    .stCheckbox > div > div {
+        background-color: #ffffff !important;
+    }
+    
+    .stRadio > div > div {
+        background-color: #ffffff !important;
+    }
+    
+    /* Data elements */
     .stDataFrame {
-        background-color: white;
+        background-color: #ffffff !important;
+        color: #262730 !important;
     }
+    
+    .stDataFrame table {
+        background-color: #ffffff !important;
+        color: #262730 !important;
+    }
+    
+    .stDataFrame th {
+        background-color: #f0f2f6 !important;
+        color: #262730 !important;
+    }
+    
+    .stDataFrame td {
+        background-color: #ffffff !important;
+        color: #262730 !important;
+    }
+    
     .stMetric {
-        background-color: white;
+        background-color: #ffffff !important;
+        color: #262730 !important;
     }
+    
+    /* Alert styling */
     .stAlert {
-        background-color: white;
+        background-color: #ffffff !important;
+        color: #262730 !important;
     }
+    
     .stSuccess {
-        background-color: #d4edda;
-        color: #155724;
+        background-color: #d4edda !important;
+        color: #155724 !important;
+        border: 1px solid #c3e6cb !important;
     }
+    
     .stWarning {
-        background-color: #fff3cd;
-        color: #856404;
+        background-color: #fff3cd !important;
+        color: #856404 !important;
+        border: 1px solid #ffeaa7 !important;
     }
+    
     .stError {
-        background-color: #f8d7da;
-        color: #721c24;
+        background-color: #f8d7da !important;
+        color: #721c24 !important;
+        border: 1px solid #f5c6cb !important;
     }
+    
     .stInfo {
-        background-color: #d1ecf1;
-        color: #0c5460;
+        background-color: #d1ecf1 !important;
+        color: #0c5460 !important;
+        border: 1px solid #bee5eb !important;
+    }
+    
+    /* Button styling */
+    .stButton > button {
+        background-color: #ff4b4b !important;
+        color: #ffffff !important;
+        border: none !important;
+    }
+    
+    .stButton > button:hover {
+        background-color: #ff6b6b !important;
+        color: #ffffff !important;
+    }
+    
+    /* Tab styling */
+    .stTabs [data-baseweb="tab-list"] {
+        background-color: #f0f2f6 !important;
+    }
+    
+    .stTabs [data-baseweb="tab"] {
+        background-color: #f0f2f6 !important;
+        color: #262730 !important;
+    }
+    
+    .stTabs [aria-selected="true"] {
+        background-color: #ffffff !important;
+        color: #262730 !important;
+    }
+    
+    /* File uploader */
+    .stFileUploader > div {
+        background-color: #ffffff !important;
+        border: 1px solid #cccccc !important;
+    }
+    
+    /* Progress bar */
+    .stProgress > div > div {
+        background-color: #f0f2f6 !important;
+    }
+    
+    .stProgress > div > div > div {
+        background-color: #ff4b4b !important;
+    }
+    
+    /* Expander */
+    .streamlit-expanderHeader {
+        background-color: #f0f2f6 !important;
+        color: #262730 !important;
+    }
+    
+    .streamlit-expanderContent {
+        background-color: #ffffff !important;
+        color: #262730 !important;
+    }
+    
+    /* Plotly charts background */
+    .js-plotly-plot {
+        background-color: #ffffff !important;
+    }
+    
+    /* Override any dark mode styles */
+    [data-testid="stAppViewContainer"] {
+        background-color: #ffffff !important;
+    }
+    
+    [data-testid="stSidebar"] {
+        background-color: #f0f2f6 !important;
+    }
+    
+    /* Force text colors */
+    h1, h2, h3, h4, h5, h6, p, span, div, label {
+        color: #262730 !important;
+    }
+    
+    /* Override any inherited dark styles */
+    * {
+        color-scheme: light !important;
     }
 </style>
 """, unsafe_allow_html=True)
