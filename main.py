@@ -240,6 +240,140 @@ st.markdown("""
     * {
         color-scheme: light !important;
     }
+    
+    /* Streamlit-tree-select component styling */
+    .st-tree-select,
+    .st-tree-select * {
+        background-color: #ffffff !important;
+        color: #262730 !important;
+    }
+    
+    .st-tree-select [role="tree"] {
+        background-color: #ffffff !important;
+    }
+    
+    .st-tree-select [role="treeitem"] {
+        background-color: #ffffff !important;
+        color: #262730 !important;
+    }
+    
+    .st-tree-select [role="treeitem"]:hover {
+        background-color: #f0f2f6 !important;
+    }
+    
+    .st-tree-select label {
+        background-color: #ffffff !important;
+        color: #262730 !important;
+    }
+    
+    /* Data grid / Dataframe specific styling */
+    .stDataFrame,
+    .stDataFrame * {
+        background-color: #ffffff !important;
+        color: #262730 !important;
+    }
+    
+    .stDataFrame thead {
+        background-color: #f0f2f6 !important;
+        color: #262730 !important;
+    }
+    
+    .stDataFrame tbody {
+        background-color: #ffffff !important;
+        color: #262730 !important;
+    }
+    
+    .stDataFrame tr {
+        background-color: #ffffff !important;
+        color: #262730 !important;
+    }
+    
+    .stDataFrame tr:hover {
+        background-color: #f0f2f6 !important;
+    }
+    
+    .stDataFrame th,
+    .stDataFrame td {
+        background-color: inherit !important;
+        color: #262730 !important;
+        border-color: #e6e9ef !important;
+    }
+    
+    /* Override any Streamlit dynamic theming */
+    [data-testid="stDataFrame"],
+    [data-testid="stDataFrame"] * {
+        background-color: #ffffff !important;
+        color: #262730 !important;
+    }
+    
+    /* Force checkbox colors */
+    .stCheckbox label,
+    .stCheckbox input[type="checkbox"] {
+        background-color: #ffffff !important;
+        color: #262730 !important;
+    }
+    
+    /* Tree select checkbox styling */
+    input[type="checkbox"] {
+        accent-color: #ff4b4b !important;
+    }
+    
+    /* Ensure all interactive elements are light */
+    div[role="tree"],
+    div[role="group"],
+    div[role="treeitem"],
+    span[role="button"] {
+        background-color: #ffffff !important;
+        color: #262730 !important;
+    }
+    
+    /* Data editor specific styling */
+    .stDataEditor,
+    .stDataEditor * {
+        background-color: #ffffff !important;
+        color: #262730 !important;
+    }
+    
+    .stDataEditor table {
+        background-color: #ffffff !important;
+    }
+    
+    .stDataEditor thead {
+        background-color: #f0f2f6 !important;
+        color: #262730 !important;
+    }
+    
+    .stDataEditor tbody {
+        background-color: #ffffff !important;
+        color: #262730 !important;
+    }
+    
+    .stDataEditor td,
+    .stDataEditor th {
+        background-color: inherit !important;
+        color: #262730 !important;
+        border-color: #e6e9ef !important;
+    }
+    
+    /* Override any data grid specific dark mode styles */
+    .grid-container,
+    .data-grid,
+    .data-grid * {
+        background-color: #ffffff !important;
+        color: #262730 !important;
+    }
+    
+    /* Force light mode for all nested elements */
+    div,
+    span,
+    p,
+    td,
+    th,
+    tr,
+    table {
+        background-color: inherit !important;
+        color: inherit !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
