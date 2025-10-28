@@ -1054,38 +1054,38 @@ def show_approval_system():
 def show_approval_overview(stats, df):
     """Display auto verification system overview with key metrics"""
     
-        col1, col2 = st.columns(2)
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("📊 Auto Verification Status Distribution")
+        approval_counts = df['approval_status'].value_counts()
         
-        with col1:
-            st.subheader("📊 Auto Verification Status Distribution")
-            approval_counts = df['approval_status'].value_counts()
+        # Create pie chart
+        fig = px.pie(values=approval_counts.values, 
+                    names=approval_counts.index,
+                    title="Auto Verification Status Distribution",
+                    color_discrete_map={
+                        'Auto Validated': '#28a745',
+                        'Manual Review Needed': '#ffc107'
+                    })
+        st.plotly_chart(fig, use_container_width=True)
+    
+    with col2:
+        st.subheader("🚨 Failed Rules Analysis")
+        failed_rules_stats = stats.get('failed_rules_stats', {})
+        
+        if failed_rules_stats:
+            failed_df = pd.DataFrame(list(failed_rules_stats.items()), 
+                                   columns=['Rule', 'Count'])
+            failed_df = failed_df.sort_values('Count', ascending=False)
             
-            # Create pie chart
-            fig = px.pie(values=approval_counts.values, 
-                        names=approval_counts.index,
-                        title="Auto Verification Status Distribution",
-                        color_discrete_map={
-                            'Auto Validated': '#28a745',
-                            'Manual Review Needed': '#ffc107'
-                        })
+            fig = px.bar(failed_df, x='Rule', y='Count',
+                       title="Most Common Failed Rules",
+                       color='Count',
+                       color_continuous_scale='Reds')
             st.plotly_chart(fig, use_container_width=True)
-        
-        with col2:
-            st.subheader("🚨 Failed Rules Analysis")
-            failed_rules_stats = stats.get('failed_rules_stats', {})
-            
-            if failed_rules_stats:
-                failed_df = pd.DataFrame(list(failed_rules_stats.items()), 
-                                       columns=['Rule', 'Count'])
-                failed_df = failed_df.sort_values('Count', ascending=False)
-                
-                fig = px.bar(failed_df, x='Rule', y='Count',
-                           title="Most Common Failed Rules",
-                           color='Count',
-                           color_continuous_scale='Reds')
-                st.plotly_chart(fig, use_container_width=True)
-            else:
-                st.info("No failed rules detected")
+        else:
+            st.info("No failed rules detected")
         
     # Key performance indicators
     st.subheader("📈 Key Performance Indicators")
@@ -1371,78 +1371,78 @@ def show_detailed_approval_results(df, stats):
     """Display detailed auto verification results with filtering"""
     
     st.subheader("📋 Detailed Auto Verification Results")
+    
+    # Filter options
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        status_filter = st.selectbox(
+            "Filter by Auto Verification Status",
+            options=["All", "Auto Validated", "Manual Review Needed"],
+            key="approval_status_filter"
+        )
+    
+    with col2:
+        test_filter = st.multiselect(
+            "Filter by Test Name",
+            options=sorted(df['test_name'].unique()),
+            default=[],
+            key="approval_test_filter"
+        )
+    
+    # Apply filters
+    filtered_df = df.copy()
+    
+    if status_filter != "All":
+        filtered_df = filtered_df[filtered_df['approval_status'] == status_filter]
+    
+    if test_filter:
+        filtered_df = filtered_df[filtered_df['test_name'].isin(test_filter)]
+    
+    # Display filtered results
+    if len(filtered_df) > 0:
+        # Show summary
+        st.info(f"Showing {len(filtered_df)} results")
         
-        # Filter options
-        col1, col2 = st.columns(2)
+        # Pagination controls
+        col1, col2, col3 = st.columns([1, 2, 1])
         
         with col1:
-            status_filter = st.selectbox(
-                "Filter by Auto Verification Status",
-                options=["All", "Auto Validated", "Manual Review Needed"],
-                key="approval_status_filter"
+            rows_per_page = st.selectbox(
+                "Rows per page",
+                options=[50, 100, 200, 500, 1000],
+                index=1,  # Default to 100
+                key="approval_rows_per_page"
             )
         
         with col2:
-            test_filter = st.multiselect(
-                "Filter by Test Name",
-                options=sorted(df['test_name'].unique()),
-                default=[],
-                key="approval_test_filter"
-            )
-        
-        # Apply filters
-        filtered_df = df.copy()
-        
-        if status_filter != "All":
-            filtered_df = filtered_df[filtered_df['approval_status'] == status_filter]
-        
-        if test_filter:
-            filtered_df = filtered_df[filtered_df['test_name'].isin(test_filter)]
-        
-        # Display filtered results
-        if len(filtered_df) > 0:
-            # Show summary
-            st.info(f"Showing {len(filtered_df)} results")
-            
-            # Pagination controls
-            col1, col2, col3 = st.columns([1, 2, 1])
-            
-            with col1:
-                rows_per_page = st.selectbox(
-                    "Rows per page",
-                    options=[50, 100, 200, 500, 1000],
-                    index=1,  # Default to 100
-                    key="approval_rows_per_page"
+            total_pages = (len(filtered_df) + rows_per_page - 1) // rows_per_page
+            if total_pages > 1:
+                page = st.selectbox(
+                    "Page",
+                    options=list(range(1, total_pages + 1)),
+                    key="approval_page"
                 )
-            
-            with col2:
-                total_pages = (len(filtered_df) + rows_per_page - 1) // rows_per_page
-                if total_pages > 1:
-                    page = st.selectbox(
-                        "Page",
-                        options=list(range(1, total_pages + 1)),
-                        key="approval_page"
-                    )
-                else:
-                    page = 1
-            
-            # Calculate start and end indices
-            start_idx = (page - 1) * rows_per_page
-            end_idx = min(start_idx + rows_per_page, len(filtered_df))
-            
-            with col3:
-                st.write(f"Page {page} of {total_pages}")
-                st.write(f"Showing {start_idx + 1}-{end_idx} of {len(filtered_df)}")
-            
-            # Get page data
-            page_df = filtered_df.iloc[start_idx:end_idx]
-            
-            # Display table with auto verification information
-            display_columns = ['patient_id', 'sample_id', 'test_name', 'test_value', 
-                             'test_flag', 'approval_status', 'approval_comments']
-            
-            display_df = page_df[display_columns].copy()
-            
+            else:
+                page = 1
+        
+        with col3:
+            st.write(f"Page {page} of {total_pages}")
+            st.write(f"Showing {start_idx + 1}-{end_idx} of {len(filtered_df)}")
+        
+        # Calculate start and end indices
+        start_idx = (page - 1) * rows_per_page
+        end_idx = min(start_idx + rows_per_page, len(filtered_df))
+        
+        # Get page data
+        page_df = filtered_df.iloc[start_idx:end_idx]
+        
+        # Display table with auto verification information
+        display_columns = ['patient_id', 'sample_id', 'test_name', 'test_value', 
+                         'test_flag', 'approval_status', 'approval_comments']
+        
+        display_df = page_df[display_columns].copy()
+        
         # Add color coding for auto verification status
         def style_approval_status(val):
             if val == 'Auto Validated':
@@ -1451,42 +1451,42 @@ def show_detailed_approval_results(df, stats):
                 return 'background-color: #fff3cd; color: #856404'
             else:
                 return ''
-            
-            styled_df = display_df.style.applymap(style_approval_status, subset=['approval_status'])
-            
-            st.dataframe(
-                styled_df,
-                use_container_width=True,
-                height=min(1000, len(display_df) * 35 + 50),
-                hide_index=True
+        
+        styled_df = display_df.style.applymap(style_approval_status, subset=['approval_status'])
+        
+        st.dataframe(
+            styled_df,
+            use_container_width=True,
+            height=min(1000, len(display_df) * 35 + 50),
+            hide_index=True
+        )
+        
+        # Download buttons
+        col_download1, col_download2 = st.columns(2)
+        
+        with col_download1:
+            # Download current page
+            csv_page = page_df.to_csv(index=False)
+            st.download_button(
+                label="💾 Download Current Page",
+                data=csv_page,
+                file_name=f"auto_verification_results_page_{page}.csv",
+                mime="text/csv",
+                use_container_width=True
             )
-            
-            # Download buttons
-            col_download1, col_download2 = st.columns(2)
-            
-            with col_download1:
-                # Download current page
-                csv_page = page_df.to_csv(index=False)
-                st.download_button(
-                    label="💾 Download Current Page",
-                    data=csv_page,
-                    file_name=f"auto_verification_results_page_{page}.csv",
-                    mime="text/csv",
-                    use_container_width=True
-                )
-            
-            with col_download2:
-                # Download all filtered results
-                csv_all = filtered_df.to_csv(index=False)
-                st.download_button(
-                    label="💾 Download All Results",
-                    data=csv_all,
-                    file_name="auto_verification_results_all.csv",
-                    mime="text/csv",
-                    use_container_width=True
-                )
-        else:
-            st.warning("No results match the selected filters")
+        
+        with col_download2:
+            # Download all filtered results
+            csv_all = filtered_df.to_csv(index=False)
+            st.download_button(
+                label="💾 Download All Results",
+                data=csv_all,
+                file_name="auto_verification_results_all.csv",
+                mime="text/csv",
+                use_container_width=True
+            )
+    else:
+        st.warning("No results match the selected filters")
 
 def show_help():
     """Display help documentation in Turkish"""
