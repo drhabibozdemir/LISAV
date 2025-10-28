@@ -1426,13 +1426,13 @@ def show_detailed_approval_results(df, stats):
             else:
                 page = 1
         
-        with col3:
-            st.write(f"Page {page} of {total_pages}")
-            st.write(f"Showing {start_idx + 1}-{end_idx} of {len(filtered_df)}")
-        
         # Calculate start and end indices
         start_idx = (page - 1) * rows_per_page
         end_idx = min(start_idx + rows_per_page, len(filtered_df))
+        
+        with col3:
+            st.write(f"Page {page} of {total_pages}")
+            st.write(f"Showing {start_idx + 1}-{end_idx} of {len(filtered_df)}")
         
         # Get page data
         page_df = filtered_df.iloc[start_idx:end_idx]
