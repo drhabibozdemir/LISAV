@@ -136,28 +136,28 @@ def main():
             file_id = f"{uploaded_file.name}_{uploaded_file.size}"
             
             if 'last_uploaded_file_id' not in st.session_state or st.session_state.last_uploaded_file_id != file_id:
-            try:
-                with st.spinner("Loading uploaded file..."):
-                    data_loader = DataLoader()
-                    df = data_loader.load_csv(uploaded_file)
-                    
+                try:
+                    with st.spinner("Loading uploaded file..."):
+                        data_loader = DataLoader()
+                        df = data_loader.load_csv(uploaded_file)
+                        
                         # Process auto verification system
                         with st.spinner("Processing auto verification system..."):
-                        approval_engine = st.session_state.approval_engine
-                        df_with_approval = approval_engine.process_test_results(df)
-                    
-                    st.session_state.data = df_with_approval
-                    st.session_state.filtered_data = df_with_approval
-                    st.session_state.data_loaded = True
+                            approval_engine = st.session_state.approval_engine
+                            df_with_approval = approval_engine.process_test_results(df)
+                        
+                        st.session_state.data = df_with_approval
+                        st.session_state.filtered_data = df_with_approval
+                        st.session_state.data_loaded = True
                         st.session_state.last_uploaded_file_id = file_id
-                    st.success(f"✅ Data loaded successfully! ({len(df)} rows)")
-                    st.rerun()
-            except ValueError as e:
-                st.error(f"❌ Error in file format: {e}")
-            except FileNotFoundError as e:
-                st.error(f"❌ File not found: {e}")
-            except Exception as e:
-                st.error(f"❌ Error loading file: {str(e)}")
+                        st.success(f"✅ Data loaded successfully! ({len(df)} rows)")
+                        st.rerun()
+                except ValueError as e:
+                    st.error(f"❌ Error in file format: {e}")
+                except FileNotFoundError as e:
+                    st.error(f"❌ File not found: {e}")
+                except Exception as e:
+                    st.error(f"❌ Error loading file: {str(e)}")
             else:
                 # File already loaded, just show success message
                 st.success(f"✅ Data already loaded! ({len(st.session_state.data)} rows)")
@@ -1065,21 +1065,21 @@ def show_approval_system():
 def show_approval_overview(stats, df):
     """Display auto verification system overview with key metrics"""
     
-        col1, col2 = st.columns(2)
-        
-        with col1:
+    col1, col2 = st.columns(2)
+    
+    with col1:
         st.subheader("📊 Auto Verification Status Distribution")
-            approval_counts = df['approval_status'].value_counts()
-            
-            # Create pie chart
-            fig = px.pie(values=approval_counts.values, 
-                        names=approval_counts.index,
-                    title="Auto Verification Status Distribution",
-                        color_discrete_map={
-                            'Auto Validated': '#28a745',
-                            'Manual Review Needed': '#ffc107'
-                        })
-            st.plotly_chart(fig, use_container_width=True)
+        approval_counts = df['approval_status'].value_counts()
+        
+        # Create pie chart
+        fig = px.pie(values=approval_counts.values, 
+                     names=approval_counts.index,
+                     title="Auto Verification Status Distribution",
+                     color_discrete_map={
+                         'Auto Validated': '#28a745',
+                         'Manual Review Needed': '#ffc107'
+                     })
+        st.plotly_chart(fig, use_container_width=True)
         
         with col2:
             st.subheader("🚨 Failed Rules Analysis")
@@ -1381,24 +1381,24 @@ def show_detailed_approval_results(df, stats):
     """Display detailed auto verification results with filtering"""
     
     st.subheader("📋 Detailed Auto Verification Results")
-        
-        # Filter options
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            status_filter = st.selectbox(
+    
+    # Filter options
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        status_filter = st.selectbox(
             "Filter by Auto Verification Status",
-                options=["All", "Auto Validated", "Manual Review Needed"],
-                key="approval_status_filter"
-            )
-        
-        with col2:
-            test_filter = st.multiselect(
-                "Filter by Test Name",
-                options=sorted(df['test_name'].unique()),
-                default=[],
+            options=["All", "Auto Validated", "Manual Review Needed"],
+            key="approval_status_filter"
+        )
+    
+    with col2:
+        test_filter = st.multiselect(
+            "Filter by Test Name",
+            options=sorted(df['test_name'].unique()),
+            default=[],
                 key="approval_test_filter"
-            )
+        )
         
         # Apply filters
         filtered_df = df.copy()
