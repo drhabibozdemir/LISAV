@@ -1586,13 +1586,24 @@ def show_help():
         st.markdown("""
         #### ✅ Auto Verification System Sekmesi
         
-        **Amaç**: Laboratuvar otomatik doğrulama sistemini kullanarak test sonuçlarını otomatik doğrulama.
+        **Amaç**: Laboratuvar otomatik doğrulama sistemini kullanarak test sonuçlarını otomatik doğrulama ve kapsamlı analiz.
         
         **Özellikler**:
-        - Auto Validated: Tüm kurallar geçti
-        - Manual Review Needed: En az bir kural başarısız
-        - İstatistiksel raporlama
-        - Başarısız kural analizi
+        - 🎯 Auto Validated: Tüm kurallar geçti
+        - ⚠️ Manual Review Needed: En az bir kural başarısız
+        - 📊 6 farklı analiz sekmesi ile detaylı istatistikler
+        - 🧪 Test bazlı performans analizi
+        - 👥 Hasta bazlı demografik analiz
+        - ⏰ Zaman bazlı trend analizi
+        - 🔬 Kalite kontrol analizi
+        
+        **📊 Analiz Sekmeleri**:
+        1. **Overview**: Genel bakış ve temel metrikler
+        2. **Test Analysis**: Test bazlı performans analizi
+        3. **Patient Analysis**: Hasta bazlı demografik analiz
+        4. **Time Analysis**: Zaman bazlı trend analizi
+        5. **Quality Control**: Kalite kontrol analizi
+        6. **Detailed Results**: Detaylı sonuçlar ve filtreleme
         
         **Kurallar** (öncelik sırasına göre):
         1. **IQC**: Internal Quality Control kontrolü
@@ -1604,9 +1615,10 @@ def show_help():
         
         **Kullanım**:
         1. Veri yüklendiğinde otomatik işlenir
-        2. İstatistikleri görüntüleyin
-        3. Başarısız kuralları analiz edin
-        4. Detaylı sonuçları inceleyin
+        2. 6 farklı sekmede detaylı istatistikleri görüntüleyin
+        3. Test, hasta, zaman ve kalite kontrol analizlerini inceleyin
+        4. Başarısız kuralları analiz edin
+        5. Detaylı sonuçları filtreleyin ve CSV olarak indirin
         """)
     
     st.markdown("---")
@@ -1681,10 +1693,72 @@ def show_help():
     
     with st.expander("📊 İstatistikler nasıl yorumlanır?"):
         st.markdown("""
+        **Genel İstatistikler**:
         - **Auto Validated**: Otomatik doğrulanan test oranı
         - **Manual Review**: Manuel inceleme gereken test oranı
         - **Failed Rules**: En sık başarısız olan kurallar
         - Pie chart ile durum dağılımı görüntülenir
+        
+        **Test Bazlı Analiz**:
+        - Her test için ayrı onay oranları
+        - En problemli testlerin belirlenmesi
+        - Manuel review rate ve auto validation rate grafikleri
+        
+        **Hasta Bazlı Analiz**:
+        - Hasta demografikleri (yaş, cinsiyet)
+        - Hasta başına onay oranları
+        - En problemli hastaların tespiti
+        
+        **Zaman Bazlı Analiz**:
+        - Günlük performans trendleri
+        - Saatlik dağılım analizi
+        - Test hacmi takibi
+        
+        **Kalite Kontrol Analizi**:
+        - IQC/EQC başarı oranları
+        - Serum indeks girişim analizi
+        - Kritik değer ihlal oranları
+        - Örnek kalite sorunları (Hemolysis, Icterus, Lipemia)
+        """)
+    
+    with st.expander("📊 Detaylı Analiz Sekmeleri Nasıl Kullanılır?"):
+        st.markdown("""
+        **1. Overview Sekmesi**:
+        - Approval status dağılımı (pie chart)
+        - Başarısız kuralların analizi
+        - Key performance indicators
+        - Genel başarı oranı
+        
+        **2. Test Analysis Sekmesi**:
+        - En problemli testler listesi
+        - Test bazında manuel review rate
+        - Test bazında auto validation rate
+        - Detaylı test istatistikleri tablosu
+        
+        **3. Patient Analysis Sekmesi**:
+        - Yaş gruplarına göre analiz
+        - Cinsiyete göre analiz
+        - En çok manuel review gereken hastalar
+        - Hasta demografik bilgileri
+        
+        **4. Time Analysis Sekmesi**:
+        - Günlük performans trendleri (line chart)
+        - Günlük test hacmi (bar chart)
+        - Saatlik performans dağılımı
+        - Trend analizi
+        
+        **5. Quality Control Sekmesi**:
+        - Kural başarısızlık analizi (pie chart)
+        - Örnek kalite sorunları (bar chart)
+        - QC failure metrikleri
+        - Hemolysis, Icterus, Lipemia analizi
+        
+        **6. Detailed Results Sekmesi**:
+        - Durum bazlı filtreleme (Auto Validated / Manual Review)
+        - Test bazlı filtreleme
+        - Sayfalama desteği (50, 100, 200, 500, 1000 satır)
+        - CSV export (tek sayfa veya tamamı)
+        - Renkli onay durumu gösterimi
         """)
     
     st.markdown("---")
