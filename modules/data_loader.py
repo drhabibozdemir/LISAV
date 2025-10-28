@@ -9,17 +9,17 @@ from pathlib import Path
 
 
 class DataLoader:
-    """Class for loading laboratory data from CSV files"""
+    """Class for loading laboratory data from CSV and Excel files"""
     
     def __init__(self):
         self.base_path = Path(__file__).parent.parent.parent
     
     def load_csv(self, file_path):
         """
-        Load data from CSV file with enhanced error handling
+        Load data from CSV or Excel file with enhanced error handling
         
         Args:
-            file_path: Path to CSV file or file-like object
+            file_path: Path to file or file-like object
             
         Returns:
             DataFrame: Loaded data as pandas DataFrame
@@ -31,12 +31,22 @@ class DataLoader:
         try:
             # If file_path is a file-like object (uploaded file)
             if hasattr(file_path, 'read'):
-                df = pd.read_csv(file_path)
+                # Determine file type by name
+                file_name = getattr(file_path, 'name', '')
+                if file_name.endswith(('.xlsx', '.xls')):
+                    df = pd.read_excel(file_path)
+                else:
+                    df = pd.read_csv(file_path)
             else:
                 # If it's a string path
                 if not os.path.exists(file_path):
                     raise FileNotFoundError(f"File not found: {file_path}")
-                df = pd.read_csv(file_path)
+                
+                # Determine file type by extension
+                if file_path.endswith(('.xlsx', '.xls')):
+                    df = pd.read_excel(file_path)
+                else:
+                    df = pd.read_csv(file_path)
             
             # Validate data structure
             self.validate_data(df)
@@ -53,7 +63,7 @@ class DataLoader:
         except pd.errors.EmptyDataError:
             raise ValueError("The uploaded file is empty")
         except pd.errors.ParserError as e:
-            raise ValueError(f"Error parsing CSV file: {e}")
+            raise ValueError(f"Error parsing file: {e}")
         except Exception as e:
             raise ValueError(f"Error loading file: {e}")
     

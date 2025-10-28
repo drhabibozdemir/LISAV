@@ -114,19 +114,19 @@ def main():
                     st.rerun()
             except FileNotFoundError as e:
                 st.warning(f"⚠️ Sample data file not found: {e}")
-                st.info("Please upload a CSV file manually")
+                st.info("Please upload a data file manually")
             except ValueError as e:
                 st.error(f"❌ Error in sample data: {e}")
-                st.info("Please upload a CSV file manually")
+                st.info("Please upload a data file manually")
             except Exception as e:
                 st.error(f"❌ Unexpected error loading sample data: {str(e)}")
-                st.info("Please upload a CSV file manually")
+                st.info("Please upload a data file manually")
         
         # File upload
         uploaded_file = st.file_uploader(
-            "Upload CSV File",
-            type=['csv'],
-            help="Upload your laboratory data in CSV format"
+            "Upload Data File",
+            type=['csv', 'xlsx', 'xls'],
+            help="Upload your laboratory data in CSV or Excel format"
         )
         
         if uploaded_file is not None:

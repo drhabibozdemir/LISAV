@@ -75,7 +75,7 @@ LIS/
 
 ### Modules
 
-1. **Data Loader**: Handles loading CSV files and sample data
+1. **Data Loader**: Handles loading CSV and Excel files and sample data
 2. **Data Filter**: Provides filtering capabilities for querying data
 3. **Data Visualizer**: Creates interactive charts and graphs
 4. **Statistics**: Performs statistical analysis on data
@@ -86,7 +86,7 @@ LIS/
 ### 1. Upload Data
 
 - Click on the file uploader in the sidebar
-- Select your CSV file
+- Select your CSV or Excel file
 - Or load sample data using the "Load Sample Data" button
 
 ### 2. Explore Data
